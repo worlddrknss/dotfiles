@@ -203,7 +203,7 @@ symbol = " "
 symbol = " "
 
 [kubernetes]
-symbol = "⎈ "
+symbol = "☸️ "
 disabled = false
 format = '[$symbol$context( \($namespace\))]($style) '
 detect_env_vars = ['STARSHIP_K8S_VISIBLE']
@@ -211,14 +211,14 @@ detect_env_vars = ['STARSHIP_K8S_VISIBLE']
 [[kubernetes.contexts]]
 context_pattern = ".*k3s.*"
 style = "bold green"
-symbol = " "
+symbol = "✅ "
 
 [[kubernetes.contexts]]
 context_pattern = ".*stage.*"
 style = "bold yellow"
-symbol = " "
+symbol = "⚠️ "
 
 [[kubernetes.contexts]]
 context_pattern = ".*prod.*"
 style = "bold red"
-symbol = " "
+symbol = "🚨 "

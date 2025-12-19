@@ -55,6 +55,33 @@ config.keys = {
     },
 }
 
+-- Colors
+config.colors = {
+    background = "#000000",
+}
+
+-- Background Image
+config.background = {
+    {
+        source = {
+            Color = "#000000",
+        },
+        width = "100%",
+        height = "100%",
+        opacity = 1.0,
+    },
+    {
+        source = {
+            File = {
+                path = wezterm.config_dir .. "/assets/background.gif",
+            },
+        },
+        width = "100%",
+        height = "100%",
+        opacity = 0.2,
+    },
+}
+
 -- Blur Configuations
 config.macos_window_background_blur = 30
 config.window_background_opacity = 0.80
