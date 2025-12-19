@@ -115,8 +115,10 @@ source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # kubernetes
 alias k="kubectl"
-alias kctx="k ctx"
+alias kcx="k ctx"
+alias kc="k ctx -c"
 alias kns="k ns"
+alias kn="k ns -c"
 alias kg="k get"
 alias kd="k describe"
 
@@ -143,4 +145,17 @@ csh() {
 
   [[ -n "$host" ]] && ssh "$host"
 }
+
+toggle_k8s() {
+  if [[ -n "$STARSHIP_K8S_VISIBLE" ]]; then
+    unset STARSHIP_K8S_VISIBLE
+  else
+    export STARSHIP_K8S_VISIBLE="1"
+  fi
+  zle && zle reset-prompt
+}
+
+zle -N toggle_k8s_widget toggle_k8s
+bindkey '\e[1;P1' toggle_k8s_widget
+
 # End My Additions

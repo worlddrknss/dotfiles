@@ -44,9 +44,14 @@ config.keys = {
         },
     },
     {
-        key = "k",
+        key = "x",
         mods = "CMD",
         action = wezterm.action.SendString "clear\n"
+    },
+    {
+        key = "k",
+        mods = "CMD",
+        action = wezterm.action.SendString("\x1b[1;P1"),
     },
 }
 

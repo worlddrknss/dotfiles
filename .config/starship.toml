@@ -1,4 +1,5 @@
 "$schema" = 'https://starship.rs/config-schema.json'
+right_format = "$kubernetes"
 
 [aws]
 symbol = " "
@@ -201,9 +202,23 @@ symbol = " "
 [zig]
 symbol = " "
 
-# ~/.config/starship.toml
-
 [kubernetes]
-format = 'on [⛵ ($user on )($cluster in )$context \($namespace\)](dimmed green) '
-disabled = true
-detect_folders = ['k8s']
+symbol = "⎈ "
+disabled = false
+format = '[$symbol$context( \($namespace\))]($style) '
+detect_env_vars = ['STARSHIP_K8S_VISIBLE']
+
+[[kubernetes.contexts]]
+context_pattern = ".*k3s.*"
+style = "bold green"
+symbol = " "
+
+[[kubernetes.contexts]]
+context_pattern = ".*stage.*"
+style = "bold yellow"
+symbol = " "
+
+[[kubernetes.contexts]]
+context_pattern = ".*prod.*"
+style = "bold red"
+symbol = " "
