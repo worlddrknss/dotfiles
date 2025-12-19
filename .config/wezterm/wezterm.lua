@@ -103,5 +103,6 @@ config.max_fps = 120
 config.prefer_egl = true
 config.hide_tab_bar_if_only_one_tab = true
 config.window_decorations = "RESIZE"
+-- config.color_scheme = 'Dracula'
 
 return config
