@@ -68,7 +68,7 @@ config.background = {
         },
         width = "100%",
         height = "100%",
-        opacity = 1.0,
+        opacity = 0.8,
     },
     {
         source = {
@@ -85,6 +85,18 @@ config.background = {
 -- Blur Configuations
 config.macos_window_background_blur = 30
 config.window_background_opacity = 0.80
+
+-- Window Frame (Border)
+config.window_frame = {
+    border_left_width = 2,
+    border_right_width = 2,
+    border_bottom_height = 2,
+    border_top_height = 2,
+    border_left_color = "#333333",
+    border_right_color = "#333333",
+    border_bottom_color = "#333333",
+    border_top_color = "#333333",
+}
 
 -- Misc Configuations
 config.max_fps = 120
