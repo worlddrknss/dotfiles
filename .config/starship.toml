@@ -9,6 +9,8 @@ command_timeout = 1000
 
 # ─────────────────────────────────────────────
 # PROMPT LAYOUT (TWO LINES)
+# LEFT: context + repo
+# RIGHT: kubernetes + runtime info (clean)
 # ─────────────────────────────────────────────
 format = """
 $os\
@@ -23,15 +25,15 @@ $line_break\
 $character
 """
 
-right_format = "$kubernetes"
+# 🔒 Kubernetes remains on the RIGHT
+right_format = "$kubernetes$cmd_duration$status$time"
 
 # ─────────────────────────────────────────────
-# MATRIX-ISH DARK PALETTE (based on your screenshot)
+# MATRIX-ISH DARK PALETTE
 # ─────────────────────────────────────────────
 palette = "matrix"
 
 [palettes.matrix]
-# Phosphor greens + yellow highlight on a dark background vibe
 fg = "#9CFF9C"
 muted = "#5F7F5F"
 blue = "#5FD7FF"
@@ -57,7 +59,7 @@ error_symbol = "[❯](bold red)"
 vimcmd_symbol = "[❮](bold cyan)"
 
 # ─────────────────────────────────────────────
-# IDENTITY / CONTEXT (LINE 1)
+# IDENTITY / CONTEXT (LEFT LINE)
 # ─────────────────────────────────────────────
 [os]
 disabled = false
@@ -92,7 +94,7 @@ format = "[$symbol$branch]($style) "
 style = "purple"
 
 [git_status]
-format = "([\\[$all_status$ahead_behind\\]]($style) )"
+format = "([\\[$all_status$ahead_behind\\]]($style)) "
 style = "yellow"
 conflicted = "≠"
 ahead = "⇡"
@@ -132,7 +134,7 @@ style = "red"
 # CLOUD (LEFT — QUIET, HIGH SIGNAL)
 # ─────────────────────────────────────────────
 [azure]
-symbol = " "   # Azure logo (Nerd Font)
+symbol = " "
 format = "[$symbol$subscription]($style) "
 style = "bold blue"
 disabled = false
@@ -143,8 +145,6 @@ format = "[$symbol($profile )]($style) "
 style = "yellow"
 disabled = true
 
-# FIXED: use a different Nerd Font glyph that is widely supported.
-# (Font Awesome "cloud" icon; Nerd Fonts usually map this reliably)
 [gcloud]
 symbol = "󰊮 "
 format = "[$symbol$account]($style) "
@@ -152,14 +152,17 @@ style = "blue"
 disabled = false
 
 # ─────────────────────────────────────────────
-# KUBERNETES (RIGHT SIDE — ALWAYS VISIBLE)
+# RIGHT PROMPT MODULES (NO DANGLING SEPARATORS)
 # ─────────────────────────────────────────────
+
+# Kubernetes anchors the right prompt
 [kubernetes]
 symbol = "󱃾 "
 disabled = false
 detect_env_vars = ["STARSHIP_K8S_VISIBLE"]
 
-format = "[$symbol$context(  $namespace)]($style)"
+# trailing space is IMPORTANT
+format = "[$symbol$context(  $namespace)]($style) "
 
 [[kubernetes.contexts]]
 context_pattern = ".*k3s.*"
@@ -175,6 +178,26 @@ symbol = "󰀦 "
 context_pattern = ".*prod.*"
 style = "bold red"
 symbol = "󰀨 "
+
+# Show duration only when slow
+[cmd_duration]
+min_time = 800
+format = "[·](muted) [󱎫 $duration]($style) "
+style = "muted"
+
+# Show exit code only when non-zero
+[status]
+disabled = false
+format = "[·](muted) [󰅚 $status]($style) "
+style = "bold red"
+map_symbol = true
+
+# Time always shows (no leading separator)
+[time]
+disabled = false
+time_format = "%H:%M"
+format = "[󰥔 $time]($style)"
+style = "muted"
 
 # ─────────────────────────────────────────────
 # OS SYMBOLS
