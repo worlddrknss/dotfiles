@@ -1,224 +1,187 @@
-"$schema" = 'https://starship.rs/config-schema.json'
+"$schema" = "https://starship.rs/config-schema.json"
+
+# ─────────────────────────────────────────────
+# GLOBAL BEHAVIOR
+# ─────────────────────────────────────────────
+add_newline = true
+scan_timeout = 30
+command_timeout = 1000
+
+# ─────────────────────────────────────────────
+# PROMPT LAYOUT (TWO LINES)
+# ─────────────────────────────────────────────
+format = """
+$os\
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_status\
+$azure\
+$gcloud\
+$line_break\
+$character
+"""
+
 right_format = "$kubernetes"
 
-[aws]
-symbol = " "
+# ─────────────────────────────────────────────
+# MATRIX-ISH DARK PALETTE (based on your screenshot)
+# ─────────────────────────────────────────────
+palette = "matrix"
 
-[buf]
-symbol = " "
+[palettes.matrix]
+# Phosphor greens + yellow highlight on a dark background vibe
+fg = "#9CFF9C"
+muted = "#5F7F5F"
+blue = "#5FD7FF"
+green = "#00FF87"
+yellow = "#FFD700"
+red = "#FF5F5F"
+purple = "#7AF08A"
+cyan = "#3DFFB2"
+orange = "#A6FF6A"
 
-[bun]
-symbol = " "
+# ─────────────────────────────────────────────
+# LINE CONTROL
+# ─────────────────────────────────────────────
+[line_break]
+disabled = false
 
-[c]
-symbol = " "
+# ─────────────────────────────────────────────
+# PROMPT SYMBOL
+# ─────────────────────────────────────────────
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
+vimcmd_symbol = "[❮](bold cyan)"
 
-[cpp]
-symbol = " "
+# ─────────────────────────────────────────────
+# IDENTITY / CONTEXT (LINE 1)
+# ─────────────────────────────────────────────
+[os]
+disabled = false
+format = "[$symbol]($style) "
+style = "green"
 
-[cmake]
-symbol = " "
-
-[conda]
-symbol = " "
-
-[crystal]
-symbol = " "
-
-[dart]
-symbol = " "
-
-[deno]
-symbol = " "
-
-[directory]
-read_only = " 󰌾"
-
-[docker_context]
-symbol = " "
-
-[elixir]
-symbol = " "
-
-[elm]
-symbol = " "
-
-[fennel]
-symbol = " "
-
-[fortran]
-symbol = " "
-
-[fossil_branch]
-symbol = " "
-
-[gcloud]
-symbol = " "
-
-[git_branch]
-symbol = " "
-
-[git_commit]
-tag_symbol = '  '
-
-[golang]
-symbol = " "
-
-[gradle]
-symbol = " "
-
-[guix_shell]
-symbol = " "
-
-[haskell]
-symbol = " "
-
-[haxe]
-symbol = " "
-
-[hg_branch]
-symbol = " "
+[username]
+show_always = true
+format = "[$user]($style)"
+style_user = "bold fg"
 
 [hostname]
+ssh_only = false
+format = "[@$hostname]($style) "
+style = "muted"
 ssh_symbol = " "
 
-[java]
-symbol = " "
+[directory]
+format = "[$path]($style)[$read_only]($read_only_style) "
+style = "bold green"
+read_only = " 󰌾"
+read_only_style = "bold red"
+truncation_length = 3
+truncate_to_repo = true
 
-[julia]
-symbol = " "
+# ─────────────────────────────────────────────
+# GIT (ESSENTIAL SIGNAL ONLY)
+# ─────────────────────────────────────────────
+[git_branch]
+symbol = " "
+format = "[$symbol$branch]($style) "
+style = "purple"
 
-[kotlin]
-symbol = " "
+[git_status]
+format = "([\\[$all_status$ahead_behind\\]]($style) )"
+style = "yellow"
+conflicted = "≠"
+ahead = "⇡"
+behind = "⇣"
+diverged = "⇕"
+untracked = "?"
+stashed = "$"
+modified = "!"
+staged = "+"
+renamed = "»"
+deleted = "✘"
 
-[lua]
-symbol = " "
-
-[memory_usage]
-symbol = "󰍛 "
-
-[meson]
-symbol = "󰔷 "
-
-[nim]
-symbol = "󰆥 "
-
-[nix_shell]
-symbol = " "
+# ─────────────────────────────────────────────
+# LANGUAGES (ONLY WHAT MATTERS)
+# ─────────────────────────────────────────────
+[golang]
+symbol = " "
+format = "[$symbol$version]($style) "
+style = "cyan"
 
 [nodejs]
 symbol = " "
-
-[ocaml]
-symbol = " "
-
-[os.symbols]
-Alpaquita = " "
-Alpine = " "
-AlmaLinux = " "
-Amazon = " "
-Android = " "
-AOSC = " "
-Arch = " "
-Artix = " "
-CachyOS = " "
-CentOS = " "
-Debian = " "
-DragonFly = " "
-Emscripten = " "
-EndeavourOS = " "
-Fedora = " "
-FreeBSD = " "
-Garuda = "󰛓 "
-Gentoo = " "
-HardenedBSD = "󰞌 "
-Illumos = "󰈸 "
-Kali = " "
-Linux = " "
-Mabox = " "
-Macos = " "
-Manjaro = " "
-Mariner = " "
-MidnightBSD = " "
-Mint = " "
-NetBSD = " "
-NixOS = " "
-Nobara = " "
-OpenBSD = "󰈺 "
-openSUSE = " "
-OracleLinux = "󰌷 "
-Pop = " "
-Raspbian = " "
-Redhat = " "
-RedHatEnterprise = " "
-RockyLinux = " "
-Redox = "󰀘 "
-Solus = "󰠳 "
-SUSE = " "
-Ubuntu = " "
-Unknown = " "
-Void = " "
-Windows = "󰍲 "
-
-[package]
-symbol = "󰏗 "
-
-[perl]
-symbol = " "
-
-[php]
-symbol = " "
-
-[pijul_channel]
-symbol = " "
-
-[pixi]
-symbol = "󰏗 "
+format = "[$symbol$version]($style) "
+style = "green"
 
 [python]
 symbol = " "
-
-[rlang]
-symbol = "󰟔 "
-
-[ruby]
-symbol = " "
+format = "[$symbol$version]($style) "
+style = "yellow"
 
 [rust]
 symbol = "󱘗 "
+format = "[$symbol$version]($style) "
+style = "red"
 
-[scala]
-symbol = " "
-
-[status]
-symbol = " "
-
-[swift]
-symbol = " "
-
-[xmake]
-symbol = " "
-
-[zig]
-symbol = " "
-
-[kubernetes]
-symbol = "☸️ "
+# ─────────────────────────────────────────────
+# CLOUD (LEFT — QUIET, HIGH SIGNAL)
+# ─────────────────────────────────────────────
+[azure]
+symbol = " "   # Azure logo (Nerd Font)
+format = "[$symbol$subscription]($style) "
+style = "bold blue"
 disabled = false
-format = '[$symbol$context( \($namespace\))]($style) '
-detect_env_vars = ['STARSHIP_K8S_VISIBLE']
+
+[aws]
+symbol = " "
+format = "[$symbol($profile )]($style) "
+style = "yellow"
+disabled = true
+
+# FIXED: use a different Nerd Font glyph that is widely supported.
+# (Font Awesome "cloud" icon; Nerd Fonts usually map this reliably)
+[gcloud]
+symbol = "󰊮 "
+format = "[$symbol$account]($style) "
+style = "blue"
+disabled = false
+
+# ─────────────────────────────────────────────
+# KUBERNETES (RIGHT SIDE — ALWAYS VISIBLE)
+# ─────────────────────────────────────────────
+[kubernetes]
+symbol = "󱃾 "
+disabled = false
+detect_env_vars = ["STARSHIP_K8S_VISIBLE"]
+
+format = "[$symbol$context(  $namespace)]($style)"
 
 [[kubernetes.contexts]]
 context_pattern = ".*k3s.*"
 style = "bold green"
-symbol = "✅ "
+symbol = "󰄬 "
 
 [[kubernetes.contexts]]
 context_pattern = ".*stage.*"
 style = "bold yellow"
-symbol = "⚠️ "
+symbol = "󰀦 "
 
 [[kubernetes.contexts]]
 context_pattern = ".*prod.*"
 style = "bold red"
-symbol = "🚨 "
+symbol = "󰀨 "
+
+# ─────────────────────────────────────────────
+# OS SYMBOLS
+# ─────────────────────────────────────────────
+[os.symbols]
+Macos = " "
+Linux = " "
+Arch = " "
+Ubuntu = " "
+Windows = "󰍲 "
