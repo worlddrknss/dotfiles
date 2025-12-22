@@ -56,9 +56,9 @@ config.keys = {
 }
 
 -- Colors
-config.colors = {
-    background = "#000000",
-}
+-- config.colors = {
+--     background = "#000000",
+-- }
 
 -- Background Image
 config.background = {
@@ -103,6 +103,5 @@ config.max_fps = 120
 config.prefer_egl = true
 config.hide_tab_bar_if_only_one_tab = true
 config.window_decorations = "RESIZE"
-config.color_scheme = 'matrix'
-
+config.color_scheme = 'darkmatrix'
 return config

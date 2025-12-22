@@ -9,8 +9,6 @@ command_timeout = 1000
 
 # ─────────────────────────────────────────────
 # PROMPT LAYOUT (TWO LINES)
-# LEFT: context + repo
-# RIGHT: kubernetes + runtime info (clean)
 # ─────────────────────────────────────────────
 format = """
 $os\
@@ -19,30 +17,19 @@ $hostname\
 $directory\
 $git_branch\
 $git_status\
+$fill\
 $azure\
 $gcloud\
+$aws\
+$kubernetes\
 $line_break\
 $character
 """
 
-# 🔒 Kubernetes remains on the RIGHT
-right_format = "$kubernetes$cmd_duration$status$time"
+right_format = "$cmd_duration$status$time"
 
-# ─────────────────────────────────────────────
-# MATRIX-ISH DARK PALETTE
-# ─────────────────────────────────────────────
-palette = "matrix"
-
-[palettes.matrix]
-fg = "#9CFF9C"
-muted = "#5F7F5F"
-blue = "#5FD7FF"
-green = "#00FF87"
-yellow = "#FFD700"
-red = "#FF5F5F"
-purple = "#7AF08A"
-cyan = "#3DFFB2"
-orange = "#A6FF6A"
+[fill]
+symbol = " "
 
 # ─────────────────────────────────────────────
 # LINE CONTROL
@@ -54,157 +41,150 @@ disabled = false
 # PROMPT SYMBOL
 # ─────────────────────────────────────────────
 [character]
-success_symbol = "[❯](bold green)"
-error_symbol = "[❯](bold red)"
-vimcmd_symbol = "[❮](bold cyan)"
+success_symbol = "[❯](bold)"
+error_symbol   = "[❯](bold)"
+vimcmd_symbol  = "[❮](bold)"
 
 # ─────────────────────────────────────────────
-# IDENTITY / CONTEXT (LEFT LINE)
+# IDENTITY / CONTEXT
 # ─────────────────────────────────────────────
 [os]
 disabled = false
 format = "[$symbol]($style) "
-style = "green"
+style = "bold"
 
 [username]
 show_always = true
 format = "[$user]($style)"
-style_user = "bold fg"
+style_user = "bold"
 
 [hostname]
 ssh_only = false
 format = "[@$hostname]($style) "
-style = "muted"
+style = "dim"
 ssh_symbol = " "
 
 [directory]
 format = "[$path]($style)[$read_only]($read_only_style) "
-style = "bold green"
+style = "bold"
 read_only = " 󰌾"
-read_only_style = "bold red"
+read_only_style = "bold"
 truncation_length = 3
 truncate_to_repo = true
 
 # ─────────────────────────────────────────────
-# GIT (ESSENTIAL SIGNAL ONLY)
+# GIT
 # ─────────────────────────────────────────────
 [git_branch]
 symbol = " "
 format = "[$symbol$branch]($style) "
-style = "purple"
+style = "bold"
 
 [git_status]
 format = "([\\[$all_status$ahead_behind\\]]($style)) "
-style = "yellow"
+style = "dim"
 conflicted = "≠"
-ahead = "⇡"
-behind = "⇣"
-diverged = "⇕"
-untracked = "?"
-stashed = "$"
-modified = "!"
-staged = "+"
-renamed = "»"
-deleted = "✘"
+ahead      = "⇡"
+behind     = "⇣"
+diverged   = "⇕"
+untracked  = "?"
+stashed    = "$"
+modified   = "!"
+staged     = "+"
+renamed    = "»"
+deleted    = "✘"
 
 # ─────────────────────────────────────────────
-# LANGUAGES (ONLY WHAT MATTERS)
+# LANGUAGES
 # ─────────────────────────────────────────────
 [golang]
 symbol = " "
 format = "[$symbol$version]($style) "
-style = "cyan"
+style = "bold"
 
 [nodejs]
 symbol = " "
 format = "[$symbol$version]($style) "
-style = "green"
+style = "bold"
 
 [python]
 symbol = " "
 format = "[$symbol$version]($style) "
-style = "yellow"
+style = "bold"
 
 [rust]
 symbol = "󱘗 "
 format = "[$symbol$version]($style) "
-style = "red"
+style = "bold"
 
 # ─────────────────────────────────────────────
-# CLOUD (LEFT — QUIET, HIGH SIGNAL)
+# CLOUD
 # ─────────────────────────────────────────────
 [azure]
 symbol = " "
 format = "[$symbol$subscription]($style) "
-style = "bold blue"
+style = "bold"
 disabled = false
 
 [aws]
 symbol = " "
 format = "[$symbol($profile )]($style) "
-style = "yellow"
+style = "bold"
 disabled = true
 
 [gcloud]
 symbol = "󰊮 "
 format = "[$symbol$account]($style) "
-style = "blue"
+style = "bold"
 disabled = false
 
 # ─────────────────────────────────────────────
-# RIGHT PROMPT MODULES (NO DANGLING SEPARATORS)
+# RIGHT PROMPT
 # ─────────────────────────────────────────────
-
-# Kubernetes anchors the right prompt
 [kubernetes]
 symbol = "󱃾 "
 disabled = false
 detect_env_vars = ["STARSHIP_K8S_VISIBLE"]
-
-# trailing space is IMPORTANT
 format = "[$symbol$context(  $namespace)]($style) "
 
 [[kubernetes.contexts]]
 context_pattern = ".*k3s.*"
-style = "bold green"
+style = "bold"
 symbol = "󰄬 "
 
 [[kubernetes.contexts]]
 context_pattern = ".*stage.*"
-style = "bold yellow"
+style = "bold"
 symbol = "󰀦 "
 
 [[kubernetes.contexts]]
 context_pattern = ".*prod.*"
-style = "bold red"
+style = "bold"
 symbol = "󰀨 "
 
-# Show duration only when slow
 [cmd_duration]
 min_time = 800
-format = "[·](muted) [󱎫 $duration]($style) "
-style = "muted"
+format = "[·](dim) [󱎫 $duration]($style) "
+style = "dim"
 
-# Show exit code only when non-zero
 [status]
 disabled = false
-format = "[·](muted) [󰅚 $status]($style) "
-style = "bold red"
+format = "[·](dim) [󰅚 $status]($style) "
+style = "bold"
 map_symbol = true
 
-# Time always shows (no leading separator)
 [time]
 disabled = false
 time_format = "%H:%M"
 format = "[󰥔 $time]($style)"
-style = "muted"
+style = "dim"
 
 # ─────────────────────────────────────────────
 # OS SYMBOLS
 # ─────────────────────────────────────────────
 [os.symbols]
-Macos = " "
-Linux = " "
-Arch = " "
-Ubuntu = " "
+Macos   = " "
+Linux   = " "
+Arch    = " "
+Ubuntu  = " "
 Windows = "󰍲 "
