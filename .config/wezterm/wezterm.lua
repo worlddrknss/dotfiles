@@ -53,6 +53,16 @@ config.keys = {
         mods = "CMD",
         action = wezterm.action.SendString("\x1b[1;P1"),
     },
+    { 
+        key = "LeftArrow",
+        mods = "OPT",
+        action = wezterm.action.SendString("\x1bb")
+    },
+    {
+        key = "RightArrow",
+        mods = "OPT",
+        action = wezterm.action.SendString("\x1bf")
+    },
 }
 
 -- Colors
