@@ -1,7 +1,4 @@
 source /opt/homebrew/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh
-plugins=(git)
-
-# My Additions
 eval "$(starship init zsh)"
 eval "$(/Users/worlddrknss/.local/bin/mise activate zsh)"
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
@@ -19,6 +16,13 @@ alias kns="k ns"
 alias kn="k ns -c"
 alias kg="k get"
 alias kd="k describe"
+
+# kubectl autocompletion
+if command -v kubectl &> /dev/null; then
+  source <(kubectl completion zsh)
+  # Enable completion for 'k' alias
+  compdef k=kubectl
+fi
 
 # system commands
 alias b="bat"
@@ -55,5 +59,3 @@ toggle_k8s() {
 
 zle -N toggle_k8s_widget toggle_k8s
 bindkey '\e[1;P1' toggle_k8s_widget
-
-# End My Additions
