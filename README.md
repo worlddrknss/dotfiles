@@ -50,11 +50,46 @@ Before installing these dotfiles, ensure you have the following:
 - **Git**: Version 2.20.0 or higher
 - **Administrative Access**: Required for some installation steps
 
-### Optional Dependencies
+### Required Tools
 
-- [Homebrew](https://brew.sh/) (macOS) or [APT](https://wiki.debian.org/Apt) (Linux)
+- **Homebrew**: https://brew.sh/ (macOS) or your system package manager on Linux
+- **Zsh**: recommended shell
+- **Git**: Version 2.20.0 or higher
+- **Starship**: Minimal, fast prompt (https://starship.rs/)
+- **Mise**: (used by the install scripts; install via Homebrew if available)
+
+### Homebrew packages
+
+This setup depends on the following Homebrew packages (install on macOS with Homebrew):
+
+- bat
+- eza
+- figlet
+- fzf
+- neovim
+- ripgrep
+- stow
+- zoxide
+- zsh-autocomplete
+- zsh-autosuggestion
+- zsh-syntax-highlighting
+
+Install them with:
+
+```bash
+# Install Homebrew first (if not installed)
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Install required packages
+brew install bat eza figlet fzf neovim ripgrep stow zoxide starship mise
+
+# Some zsh plugins may be installed via brew or cloned into your zsh plugins directory:
+# e.g. brew install zsh-autosuggestions zsh-syntax-highlighting
+```
+
+### Optional Extras
+
 - [Oh My Zsh](https://ohmyz.sh/) or similar shell framework
-- [Git](https://git-scm.com/) for version control
 
 ## Installation
 
@@ -277,10 +312,11 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 For questions or support:
 
-- **Email**: [Your Email]
+- **Email**: See GitHub profile for contact information
 - **GitHub**: [@worlddrknss](https://github.com/worlddrknss)
 
 ---
 
-**Last Updated**: 2024
+**Last Updated**: 2026-01-17
 **Maintainer**: worlddrknss
+
