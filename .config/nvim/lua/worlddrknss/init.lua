@@ -1,1 +1,2 @@
-require("worlddrknss.lines")
+require("worlddrknss.config.base")
+require("worlddrknss.config.lazy")
