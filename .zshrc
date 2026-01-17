@@ -1,12 +1,12 @@
-source /opt/homebrew/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh
-eval "$(starship init zsh)"
 eval "$(/Users/worlddrknss/.local/bin/mise activate zsh)"
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 eval "$(zoxide init zsh)"
 source <(fzf --zsh)
-source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source /opt/homebrew/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh
 source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-figlet -f slant "WorldDrknss"
+source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+eval "$(starship init zsh)"
+figlet "WorldDrknss"
 
 # kubernetes
 alias k="kubectl"
@@ -58,4 +58,6 @@ toggle_k8s() {
 }
 
 zle -N toggle_k8s_widget toggle_k8s
+bindkey '^I' autosuggest-accept
+bindkey '^[[C' forward-char
 bindkey '\e[1;P1' toggle_k8s_widget
