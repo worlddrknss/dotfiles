@@ -1,4 +1,4 @@
-"$schema" = "https://starship.rs/config-schema.json"
+"$schema" = 'https://starship.rs/config-schema.json'
 
 # ─────────────────────────────────────────────
 # GLOBAL BEHAVIOR
@@ -7,26 +7,52 @@ add_newline = true
 scan_timeout = 30
 command_timeout = 1000
 
-# ─────────────────────────────────────────────
-# PROMPT LAYOUT (TWO LINES)
-# ─────────────────────────────────────────────
 format = """
+[](color_orange)\
 $os\
 $username\
-$hostname\
+[](bg:color_yellow fg:color_orange)\
 $directory\
+[](fg:color_yellow bg:color_aqua)\
 $git_branch\
 $git_status\
-$fill\
-$azure\
-$gcloud\
-$aws\
+[](fg:color_aqua bg:color_green)\
 $kubernetes\
-$line_break\
-$character
-"""
+[](fg:color_green bg:color_blue)\
+$c\
+$cpp\
+$rust\
+$golang\
+$nodejs\
+$php\
+$java\
+$kotlin\
+$haskell\
+$python\
+[](fg:color_blue bg:color_bg3)\
+$docker_context\
+$conda\
+$pixi\
+[](fg:color_bg3 bg:color_bg1)\
+$time\
+[ ](fg:color_bg1)\
+$line_break$character"""
 
-right_format = "$cmd_duration$status$time"
+# right_format = "$cmd_duration$status"
+
+palette = 'gruvbox_dark'
+
+[palettes.gruvbox_dark]
+color_fg0 = '#fbf1c7'
+color_bg1 = '#3c3836'
+color_bg3 = '#665c54'
+color_blue = '#458588'
+color_aqua = '#689d6a'
+color_green = '#98971a'
+color_orange = '#d65d0e'
+color_purple = '#b16286'
+color_red = '#cc241d'
+color_yellow = '#d79921'
 
 [fill]
 symbol = " "
@@ -41,22 +67,50 @@ disabled = false
 # PROMPT SYMBOL
 # ─────────────────────────────────────────────
 [character]
-success_symbol = "[❯](bold)"
-error_symbol   = "[❯](bold)"
-vimcmd_symbol  = "[❮](bold)"
+disabled = false
+success_symbol = '[](bold fg:color_green)'
+error_symbol = '[](bold fg:color_red)'
+vimcmd_symbol = '[](bold fg:color_green)'
+vimcmd_replace_one_symbol = '[](bold fg:color_purple)'
+vimcmd_replace_symbol = '[](bold fg:color_purple)'
+vimcmd_visual_symbol = '[](bold fg:color_yellow)'
 
 # ─────────────────────────────────────────────
 # IDENTITY / CONTEXT
 # ─────────────────────────────────────────────
 [os]
 disabled = false
-format = "[$symbol]($style) "
-style = "bold"
+style = "bg:color_orange fg:color_fg0"
+
+[os.symbols]
+Windows = "󰍲"
+Ubuntu = "󰕈"
+SUSE = ""
+Raspbian = "󰐿"
+Mint = "󰣭"
+Macos = "󰀵"
+Manjaro = ""
+Linux = "󰌽"
+Gentoo = "󰣨"
+Fedora = "󰣛"
+Alpine = ""
+Amazon = ""
+Android = ""
+AOSC = ""
+Arch = "󰣇"
+Artix = "󰣇"
+EndeavourOS = ""
+CentOS = ""
+Debian = "󰣚"
+Redhat = "󱄛"
+RedHatEnterprise = "󱄛"
+Pop = ""
 
 [username]
 show_always = true
-format = "[$user]($style)"
-style_user = "bold"
+style_user = "bg:color_orange fg:color_fg0"
+style_root = "bg:color_orange fg:color_fg0"
+format = '[ $user ]($style)'
 
 [hostname]
 ssh_only = false
@@ -65,24 +119,32 @@ style = "dim"
 ssh_symbol = " "
 
 [directory]
-format = "[$path]($style)[$read_only]($read_only_style) "
-style = "bold"
+style = "fg:color_fg0 bg:color_yellow"
+format = "[ $path ]($style)"
+truncation_length = 3
+truncation_symbol = "…/"
 read_only = " 󰌾"
 read_only_style = "bold"
-truncation_length = 3
 truncate_to_repo = true
+
+[directory.substitutions]
+"Documents" = "󰈙 "
+"Downloads" = " "
+"Music" = "󰝚 "
+"Pictures" = " "
+"Developer" = "󰲋 "
 
 # ─────────────────────────────────────────────
 # GIT
 # ─────────────────────────────────────────────
 [git_branch]
-symbol = " "
-format = "[$symbol$branch]($style) "
-style = "bold"
+symbol = ""
+style = "bg:color_aqua"
+format = '[[ $symbol $branch ](fg:color_fg0 bg:color_aqua)]($style)'
 
 [git_status]
-format = "([\\[$all_status$ahead_behind\\]]($style)) "
-style = "dim"
+style = "bg:color_aqua"
+format = '[[($all_status$ahead_behind )](fg:color_fg0 bg:color_aqua)]($style)'
 conflicted = "≠"
 ahead      = "⇡"
 behind     = "⇣"
@@ -97,25 +159,55 @@ deleted    = "✘"
 # ─────────────────────────────────────────────
 # LANGUAGES
 # ─────────────────────────────────────────────
+[c]
+symbol = " "
+style = "bg:color_blue"
+format = '[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)'
+
+[cpp]
+symbol = " "
+style = "bg:color_blue"
+format = '[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)'
+
 [golang]
-symbol = " "
-format = "[$symbol$version]($style) "
-style = "bold"
+symbol = ""
+style = "bg:color_blue"
+format = '[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)'
 
 [nodejs]
-symbol = " "
-format = "[$symbol$version]($style) "
-style = "bold"
+symbol = ""
+style = "bg:color_blue"
+format = '[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)'
+
+[php]
+symbol = ""
+style = "bg:color_blue"
+format = '[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)'
+
+[java]
+symbol = ""
+style = "bg:color_blue"
+format = '[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)'
+
+[kotlin]
+symbol = ""
+style = "bg:color_blue"
+format = '[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)'
+
+[haskell]
+symbol = ""
+style = "bg:color_blue"
+format = '[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)'
 
 [python]
-symbol = " "
-format = "[$symbol$version]($style) "
-style = "bold"
+symbol = ""
+style = "bg:color_blue"
+format = '[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)'
 
 [rust]
-symbol = "󱘗 "
-format = "[$symbol$version]($style) "
-style = "bold"
+symbol = ""
+style = "bg:color_blue"
+format = '[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)'
 
 # ─────────────────────────────────────────────
 # CLOUD
@@ -139,29 +231,58 @@ style = "bold"
 disabled = false
 
 # ─────────────────────────────────────────────
-# RIGHT PROMPT
+# KUBERNETES
 # ─────────────────────────────────────────────
 [kubernetes]
 symbol = "󱃾 "
+style = "bg:color_green fg:color_fg0"
+format = '[[ $symbol $context( $namespace) ](fg:color_fg0 bg:color_green)]($style)'
 disabled = false
 detect_env_vars = ["STARSHIP_K8S_VISIBLE"]
-format = "[$symbol$context(  $namespace)]($style) "
 
 [[kubernetes.contexts]]
 context_pattern = ".*k3s.*"
-style = "bold"
+style = "bg:color_green fg:color_fg0"
 symbol = "󰄬 "
 
 [[kubernetes.contexts]]
 context_pattern = ".*stage.*"
-style = "bold"
+style = "bg:color_green fg:color_fg0"
 symbol = "󰀦 "
 
 [[kubernetes.contexts]]
 context_pattern = ".*prod.*"
-style = "bold"
+style = "bg:color_green fg:color_fg0"
 symbol = "󰀨 "
 
+# ─────────────────────────────────────────────
+# CONTAINER / ENV
+# ─────────────────────────────────────────────
+[docker_context]
+symbol = ""
+style = "bg:color_bg3"
+format = '[[ $symbol( $context) ](fg:#83a598 bg:color_bg3)]($style)'
+
+[conda]
+style = "bg:color_bg3"
+format = '[[ $symbol( $environment) ](fg:#83a598 bg:color_bg3)]($style)'
+
+[pixi]
+style = "bg:color_bg3"
+format = '[[ $symbol( $version)( $environment) ](fg:color_fg0 bg:color_bg3)]($style)'
+
+# ─────────────────────────────────────────────
+# TIME
+# ─────────────────────────────────────────────
+[time]
+disabled = false
+time_format = "%R"
+style = "bg:color_bg1"
+format = '[[  $time ](fg:color_fg0 bg:color_bg1)]($style)'
+
+# ─────────────────────────────────────────────
+# RIGHT PROMPT
+# ─────────────────────────────────────────────
 [cmd_duration]
 min_time = 800
 format = "[·](dim) [󱎫 $duration]($style) "
@@ -172,19 +293,3 @@ disabled = false
 format = "[·](dim) [󰅚 $status]($style) "
 style = "bold"
 map_symbol = true
-
-[time]
-disabled = false
-time_format = "%H:%M"
-format = "[󰥔 $time]($style)"
-style = "dim"
-
-# ─────────────────────────────────────────────
-# OS SYMBOLS
-# ─────────────────────────────────────────────
-[os.symbols]
-Macos   = " "
-Linux   = " "
-Arch    = " "
-Ubuntu  = " "
-Windows = "󰍲 "
