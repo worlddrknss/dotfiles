@@ -44,20 +44,20 @@ $cmd_duration\
 $status\
 $line_break$character"""
 
-palette = 'gruvbox_dark'
+palette = 'onedark'
 
-[palettes.gruvbox_dark]
-color_fg0 = '#fbf1c7'
-color_bg1 = '#3c3836'
-color_bg3 = '#665c54'
-color_blue = '#458588'
-color_aqua = '#689d6a'
-color_aqua_light = '#83a598'
-color_green = '#98971a'
-color_orange = '#d65d0e'
-color_purple = '#b16286'
-color_red = '#cc241d'
-color_yellow = '#d79921'
+[palettes.onedark]
+color_fg0 = '#1e222a'
+color_bg1 = '#4b5263'
+color_bg3 = '#3e4452'
+color_blue = '#528bda'
+color_aqua = '#3f9da6'
+color_aqua_light = '#56b6c2'
+color_green = '#7dab5a'
+color_orange = '#cc8850'
+color_purple = '#b160c9'
+color_red = '#d75f6a'
+color_yellow = '#d4a84b'
 
 [fill]
 symbol = " "

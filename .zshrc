@@ -4,6 +4,7 @@
 eval "$(/Users/worlddrknss/.local/bin/mise activate zsh)"
 
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+export EDITOR="nvim"
 
 eval "$(zoxide init zsh)"
 source <(fzf --zsh)
