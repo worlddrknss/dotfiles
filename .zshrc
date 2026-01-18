@@ -68,8 +68,8 @@ fi
 # ============================================================
 # System aliases
 # ============================================================
-# Cat replacement — no paging, line numbers optional
-alias cat='bat --paging=never --style=grid --decorations=always'
+# Cat replacement — no paging, line numbers optional (hide file header/time)
+alias cat='bat --paging=never --style=grid,-header'
 
 # Interactive bat — with pager and line numbers
 alias b='bat --paging=always --style=grid,numbers --decorations=always'
