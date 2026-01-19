@@ -16,7 +16,15 @@ return {
             'html',
             'css',
             'tsx',
-            'dart'
+            'dart',
+            'json',
+            'yaml',
+            'markdown',
+            'markdown_inline',
+            'vim',
+            'regex',
+            'dockerfile',
+            'kubernetes',
         },
         auto_install = true,
         highlight = {
