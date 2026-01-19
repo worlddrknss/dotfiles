@@ -7,7 +7,17 @@ return {
     build = ':TSUpdate',
     -- main = 'nvim-treesitter.configs',
     opts = {
-        ensure_installed = {'bash', 'go', 'javascript', 'typescript', 'lua'},
+        ensure_installed = {
+            'bash',
+            'go',
+            'javascript',
+            'typescript',
+            'lua',
+            'html',
+            'css',
+            'tsx',
+            'dart'
+        },
         auto_install = true,
         highlight = {
             enable = true,
