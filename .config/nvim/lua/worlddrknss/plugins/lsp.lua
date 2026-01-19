@@ -1,3 +1,6 @@
+-- ==============================================================
+-- LSP configuration for Neovim using mason and mason-lspconfig.
+-- ==============================================================
 return {
     'folke/lazydev.nvim',
     ft = 'lua',
@@ -14,11 +17,9 @@ return {
                 "lua_ls",
                 "bashls",
                 "gopls",
-                "tsserver",
                 "html",
                 "cssls",
-                "angularls",
-                "dartls"
+                "angularls"
             },
             automatic_installation = true
         },
