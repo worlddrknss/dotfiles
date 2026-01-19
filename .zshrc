@@ -138,4 +138,5 @@ bindkey '\e[1;P1' toggle_k8s_widget
 # ============================================================
 # Cosmetic
 # ============================================================
-[[ -o interactive ]] && figlet "WorldDrknss"
+# [[ -o interactive ]] && fastfetch
+# [[ -o interactive ]] && figlet "WorldDrknss"
