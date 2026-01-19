@@ -1,3 +1,6 @@
+-- =================================================================
+-- Treesitter is a syntax parser plugin for Neovim written in Lua.
+-- =================================================================
 return {
     'nvim-treesitter/nvim-treesitter',
     lazy = false,
