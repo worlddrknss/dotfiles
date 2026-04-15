@@ -102,7 +102,7 @@ alias rgn='rg --line-number'
 # Functions
 # ============================================================
 csh() {
-  local host
+  local host port
   host=$(
     awk '
       $1 == "Host" {
@@ -112,7 +112,20 @@ csh() {
       }
     ' ~/.ssh/config | sort -u | fzf --prompt="SSH > "
   )
-  [[ -n "$host" ]] && ssh "$host"
+  [[ -z "$host" ]] && return
+  local cfg_port
+  cfg_port=$(awk -v host="$host" '
+    $1 == "Host" { found = 0; for (i = 2; i <= NF; i++) if ($i == host) found = 1 }
+    found && $1 == "Port" { print $2; exit }
+  ' ~/.ssh/config)
+  : "${cfg_port:=22}"
+  read -r "port?Port (${cfg_port}): "
+  : "${port:=$cfg_port}"
+  if [[ -n "$port" && "$port" != "22" ]]; then
+    ssh -p "$port" "$host"
+  else
+    ssh "$host"
+  fi
 }
 
 toggle_k8s() {
@@ -140,3 +153,8 @@ bindkey '\e[1;P1' toggle_k8s_widget
 # ============================================================
 # [[ -o interactive ]] && fastfetch
 # [[ -o interactive ]] && figlet "WorldDrknss"
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/Users/worlddrknss/.lmstudio/bin"
+# End of LM Studio CLI section
+
+export PATH="/opt/homebrew/opt/libpq/bin:$PATH"

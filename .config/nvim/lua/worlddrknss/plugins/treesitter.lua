@@ -24,7 +24,7 @@ return {
             'vim',
             'regex',
             'dockerfile',
-            'kubernetes',
+            'kubernetes'
         },
         auto_install = true,
         highlight = {
