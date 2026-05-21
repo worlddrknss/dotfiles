@@ -4,7 +4,7 @@
 # GLOBAL BEHAVIOR
 # ─────────────────────────────────────────────
 add_newline = true
-scan_timeout = 30
+scan_timeout = 200
 command_timeout = 1000
 
 format = """
@@ -117,12 +117,6 @@ style_user = "bg:color_orange fg:color_fg0"
 style_root = "bg:color_orange fg:color_fg0"
 format = '[ $user ]($style)'
 
-[hostname]
-ssh_only = false
-format = "[@$hostname]($style) "
-style = "dim"
-ssh_symbol = " "
-
 [directory]
 style = "fg:color_fg0 bg:color_yellow"
 format = "[ $path ]($style)"
@@ -164,12 +158,6 @@ deleted    = "✘"
 [git_state]
 style = "bg:color_aqua"
 format = '[[ $state( $progress_current/$progress_total) ](fg:color_fg0 bg:color_aqua)]($style)'
-
-[jobs]
-symbol = "✦"
-style = "bold color_purple"
-format = "[$symbol$number]($style) "
-threshold = 1
 
 # ─────────────────────────────────────────────
 # LANGUAGES

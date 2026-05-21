@@ -1,7 +1,7 @@
 # ============================================================
 # Environment / Tooling
 # ============================================================
-eval "$(/Users/worlddrknss/.local/bin/mise activate zsh)"
+eval "$(/opt/homebrew/bin/mise activate zsh)"
 
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 export EDITOR="nvim"
@@ -10,10 +10,22 @@ eval "$(zoxide init zsh)"
 source <(fzf --zsh)
 
 # ============================================================
+# History
+# ============================================================
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=100000
+SAVEHIST=100000
+setopt HIST_IGNORE_DUPS HIST_IGNORE_SPACE SHARE_HISTORY HIST_VERIFY
+
+# ============================================================
 # Completion system (must be early)
 # ============================================================
 autoload -Uz compinit
-compinit
+if [[ -n ~/.zcompdump(#qN.mh+24) ]]; then
+  compinit
+else
+  compinit -C
+fi
 
 # ============================================================
 # Autosuggestions (FIRST)
