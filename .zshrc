@@ -6,7 +6,6 @@ eval "$(/opt/homebrew/bin/mise activate zsh)"
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 export EDITOR="nvim"
 
-eval "$(zoxide init zsh)"
 source <(fzf --zsh)
 
 # ============================================================
@@ -170,3 +169,13 @@ export PATH="$PATH:/Users/worlddrknss/.lmstudio/bin"
 # End of LM Studio CLI section
 
 export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
+
+# ============================================================
+# Zoxide (must be initialized last)
+# ============================================================
+eval "$(zoxide init zsh)"
+
+# ============================================================
+# Local overrides (machine-specific, untracked)
+# ============================================================
+[[ -f "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"
