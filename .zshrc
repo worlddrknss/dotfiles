@@ -163,12 +163,12 @@ _csh_connect() {
   local -a ssh_args=("$host")
   [[ "$port" != "22" ]] && ssh_args=(-p "$port" "$host")
 
-  local errfile status offending kh_file kh_line reply
+  local errfile rc offending kh_file kh_line reply
   errfile=$(mktemp)
   ssh "${ssh_args[@]}" 2>"$errfile"
-  status=$?
+  rc=$?
 
-  if (( status != 0 )); then
+  if (( rc != 0 )); then
     offending=$(grep -oE 'Offending [A-Za-z0-9_-]+ key in .+known_hosts:[0-9]+' "$errfile" | tail -1)
     if [[ -n "$offending" ]]; then
       kh_file=${offending#*in }
@@ -188,7 +188,7 @@ _csh_connect() {
     cat "$errfile" >&2
   fi
   rm -f "$errfile"
-  return $status
+  return $rc
 }
 
 # Quickly delete a stale entry from known_hosts by line number, e.g. after
