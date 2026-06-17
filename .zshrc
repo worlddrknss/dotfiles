@@ -157,38 +157,47 @@ csh() {
 }
 
 # Connect, and if ssh fails because a rotated host reused an IP with a new
-# host key, offer to drop the stale known_hosts line and retry once.
+# host key, offer to drop the stale known_hosts line and retry. Loops since
+# a host can have a separate stale entry per key algorithm (RSA/ECDSA/ED25519).
 _csh_connect() {
   local host=$1 port=$2
   local -a ssh_args=("$host")
   [[ "$port" != "22" ]] && ssh_args=(-p "$port" "$host")
 
-  local errfile rc offending kh_file kh_line reply
-  errfile=$(mktemp)
-  ssh "${ssh_args[@]}" 2>"$errfile"
-  rc=$?
+  local errfile rc offending kh_file kh_line reply attempt
+  for attempt in 1 2 3 4 5; do
+    errfile=$(mktemp)
+    ssh "${ssh_args[@]}" 2>"$errfile"
+    rc=$?
 
-  if (( rc != 0 )); then
-    offending=$(command grep -oE 'Offending [A-Za-z0-9_-]+ key in [^:]+:[0-9]+' "$errfile" | tail -1)
-    if [[ -n "$offending" ]]; then
-      kh_file=${offending#*in }
-      kh_file=${kh_file%:*}
-      kh_line=${offending##*:}
-      echo
-      echo "csh: stale host key for $host"
-      echo "     $(sed -n "${kh_line}p" "$kh_file")"
-      read -r "reply?Remove line $kh_line from $kh_file and retry? [y/N] "
-      if [[ "$reply" == [yY] ]]; then
-        sed -i '' "${kh_line}d" "$kh_file"
-        rm -f "$errfile"
-        ssh "${ssh_args[@]}"
-        return
-      fi
+    if (( rc == 0 )); then
+      rm -f "$errfile"
+      return 0
     fi
-    cat "$errfile" >&2
-  fi
-  rm -f "$errfile"
-  return $rc
+
+    offending=$(command grep -oE 'Offending [A-Za-z0-9_-]+ key in [^:]+:[0-9]+' "$errfile" | tail -1)
+    if [[ -z "$offending" ]]; then
+      cat "$errfile" >&2
+      rm -f "$errfile"
+      return $rc
+    fi
+
+    kh_file=${offending#*in }
+    kh_file=${kh_file%:*}
+    kh_line=${offending##*:}
+    echo
+    echo "csh: stale host key for $host"
+    echo "     $(sed -n "${kh_line}p" "$kh_file")"
+    read -r "reply?Remove line $kh_line from $kh_file and retry? [y/N] "
+    rm -f "$errfile"
+    if [[ "$reply" != [yY] ]]; then
+      return $rc
+    fi
+    sed -i '' "${kh_line}d" "$kh_file"
+  done
+
+  echo "csh: still failing after removing stale key(s) for $host" >&2
+  return 1
 }
 
 # Quickly delete a stale entry from known_hosts by line number, e.g. after
