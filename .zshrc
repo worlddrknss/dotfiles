@@ -138,10 +138,14 @@ csh() {
     return
   fi
 
+  local real_host
+  real_host=$(ssh -G "$host" 2>/dev/null | awk '$1=="hostname"{print $2; exit}')
+  : "${real_host:=$host}"
+
   local attempt try_port
   for attempt in 0 1 2 3; do
     try_port=$((port + attempt))
-    if nc -z -w 5 "$host" "$try_port" 2>/dev/null; then
+    if nc -z -w 5 "$real_host" "$try_port" 2>/dev/null; then
       _csh_connect "$host" "$try_port"
       return
     fi
