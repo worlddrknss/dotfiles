@@ -169,7 +169,7 @@ _csh_connect() {
   rc=$?
 
   if (( rc != 0 )); then
-    offending=$(grep -oE 'Offending [A-Za-z0-9_-]+ key in .+known_hosts:[0-9]+' "$errfile" | tail -1)
+    offending=$(command grep -oE 'Offending [A-Za-z0-9_-]+ key in [^:]+:[0-9]+' "$errfile" | tail -1)
     if [[ -n "$offending" ]]; then
       kh_file=${offending#*in }
       kh_file=${kh_file%:*}
