@@ -132,11 +132,24 @@ csh() {
   : "${cfg_port:=22}"
   read -r "port?Port (${cfg_port}): "
   : "${port:=$cfg_port}"
-  if [[ -n "$port" && "$port" != "22" ]]; then
-    ssh -p "$port" "$host"
-  else
+
+  if [[ "$port" == "22" ]]; then
     ssh "$host"
+    return
   fi
+
+  local attempt try_port
+  for attempt in 0 1 2 3; do
+    try_port=$((port + attempt))
+    if nc -z -w 5 "$host" "$try_port" 2>/dev/null; then
+      ssh -p "$try_port" "$host"
+      return
+    fi
+    echo "csh: port $try_port unreachable, trying next..." >&2
+  done
+
+  echo "csh: failed to connect to $host on ports $port-$((port + 3))" >&2
+  return 1
 }
 
 toggle_k8s() {
