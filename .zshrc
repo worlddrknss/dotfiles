@@ -134,7 +134,7 @@ csh() {
   : "${port:=$cfg_port}"
 
   if [[ "$port" == "22" ]]; then
-    ssh "$host"
+    _csh_connect "$host" 22
     return
   fi
 
@@ -142,7 +142,7 @@ csh() {
   for attempt in 0 1 2 3; do
     try_port=$((port + attempt))
     if nc -z -w 5 "$host" "$try_port" 2>/dev/null; then
-      ssh -p "$try_port" "$host"
+      _csh_connect "$host" "$try_port"
       return
     fi
     echo "csh: port $try_port unreachable, trying next..." >&2
@@ -150,6 +150,53 @@ csh() {
 
   echo "csh: failed to connect to $host on ports $port-$((port + 3))" >&2
   return 1
+}
+
+# Connect, and if ssh fails because a rotated host reused an IP with a new
+# host key, offer to drop the stale known_hosts line and retry once.
+_csh_connect() {
+  local host=$1 port=$2
+  local -a ssh_args=("$host")
+  [[ "$port" != "22" ]] && ssh_args=(-p "$port" "$host")
+
+  local errfile status offending kh_file kh_line reply
+  errfile=$(mktemp)
+  ssh "${ssh_args[@]}" 2>"$errfile"
+  status=$?
+
+  if (( status != 0 )); then
+    offending=$(grep -oE 'Offending [A-Za-z0-9_-]+ key in .+known_hosts:[0-9]+' "$errfile" | tail -1)
+    if [[ -n "$offending" ]]; then
+      kh_file=${offending#*in }
+      kh_file=${kh_file%:*}
+      kh_line=${offending##*:}
+      echo
+      echo "csh: stale host key for $host"
+      echo "     $(sed -n "${kh_line}p" "$kh_file")"
+      read -r "reply?Remove line $kh_line from $kh_file and retry? [y/N] "
+      if [[ "$reply" == [yY] ]]; then
+        sed -i '' "${kh_line}d" "$kh_file"
+        rm -f "$errfile"
+        ssh "${ssh_args[@]}"
+        return
+      fi
+    fi
+    cat "$errfile" >&2
+  fi
+  rm -f "$errfile"
+  return $status
+}
+
+# Quickly delete a stale entry from known_hosts by line number, e.g. after
+# "Offending RSA key in /Users/you/.ssh/known_hosts:42" in an ssh error.
+rmknown() {
+  local line=$1 file=${2:-$HOME/.ssh/known_hosts}
+  if [[ -z "$line" ]]; then
+    echo "Usage: rmknown <line_number> [known_hosts_file]" >&2
+    return 1
+  fi
+  echo "Removing: $(sed -n "${line}p" "$file")"
+  sed -i '' "${line}d" "$file"
 }
 
 toggle_k8s() {
