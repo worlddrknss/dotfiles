@@ -1,8 +1,7 @@
 # Dotfiles
 
-> Professional development environment configuration files for macOS/Linux systems
+> Professional development environment configuration files for macOS systems
 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Maintenance](https://img.shields.io/badge/maintained-yes-green.svg)](https://github.com/worlddrknss/dotfiles)
 
 ## Table of Contents
@@ -17,46 +16,45 @@
 - [Maintenance](#maintenance)
 - [Troubleshooting](#troubleshooting)
 - [Contributing](#contributing)
-- [License](#license)
 - [Support](#support)
 
 ## Overview
 
-This repository contains a curated collection of configuration files (dotfiles) designed to provide a consistent, efficient, and professional development environment across multiple systems. These configurations are optimized for productivity and follow industry best practices.
+This repository contains a curated collection of configuration files (dotfiles) designed to provide a consistent, efficient, and professional development environment on macOS. These configurations are optimized for productivity and follow industry best practices.
 
 ### Purpose
 
-- **Consistency**: Maintain uniform development environments across different machines
+- **Consistency**: Maintain uniform development environments across your macOS machines
 - **Efficiency**: Reduce setup time and configuration overhead
 - **Productivity**: Pre-configured tools and settings for optimal workflow
 - **Version Control**: Track and manage configuration changes over time
 
 ## Features
 
-- 🔧 **Shell Configuration**: Optimized shell settings (Zsh/Bash)
+- 🔧 **Shell Configuration**: Optimized shell settings (Zsh)
 - 📝 **Editor Configuration**: Vim/Neovim or other editor settings
 - 🎨 **Terminal Customization**: Enhanced terminal experience
 - 🔐 **Security**: Secure credential management practices
 - 🚀 **Performance**: Optimized settings for system performance
 - 📦 **Package Management**: Integration with common package managers
-- 🔄 **Synchronization**: Easy deployment across multiple systems
+- 🔄 **Synchronization**: Easy deployment across multiple macOS machines
 
 ## Prerequisites
 
 Before installing these dotfiles, ensure you have the following:
 
-- **Operating System**: macOS (10.15+) or Linux (Ubuntu 20.04+, Debian 11+, or equivalent)
-- **Shell**: Zsh (recommended) or Bash
+- **Operating System**: macOS (10.15+)
+- **Shell**: Zsh
 - **Git**: Version 2.20.0 or higher
 - **Administrative Access**: Required for some installation steps
 
 ### Required Tools
 
-- **Homebrew**: https://brew.sh/ (macOS) or your system package manager on Linux
+- **Homebrew**: https://brew.sh/ (macOS)
 - **Zsh**: recommended shell
 - **Git**: Version 2.20.0 or higher
 - **Starship**: Minimal, fast prompt (https://starship.rs/)
-- **Mise**: (used by the install scripts; install via Homebrew if available)
+- **Mise**: Runtime manager used by the shell configuration
 
 ### Homebrew packages
 
@@ -71,7 +69,7 @@ This setup depends on the following Homebrew packages (install on macOS with Hom
 - stow
 - zoxide
 - zsh-autocomplete
-- zsh-autosuggestion
+- zsh-autosuggestions
 - zsh-syntax-highlighting
 
 Install them with:
@@ -92,19 +90,6 @@ brew install bat eza figlet fzf neovim ripgrep stow zoxide starship mise
 - [Oh My Zsh](https://ohmyz.sh/) or similar shell framework
 
 ## Installation
-
-### Quick Install
-
-```bash
-# Clone the repository
-git clone https://github.com/worlddrknss/dotfiles.git ~/.dotfiles
-
-# Navigate to the repository
-cd ~/.dotfiles
-
-# Run the installation script (if available)
-./install.sh
-```
 
 ### Manual Installation
 
@@ -136,9 +121,8 @@ cd ~/.dotfiles
 
 ### Installation Options
 
-- **Full Installation**: Installs all configuration files
-- **Selective Installation**: Choose specific components to install
-- **Dry Run**: Preview changes without applying them
+- **Full Installation**: Link all relevant configuration files
+- **Selective Installation**: Link only the components you want
 
 ## Configuration
 
@@ -146,19 +130,18 @@ cd ~/.dotfiles
 
 All configuration files are designed to be easily customizable. Key configuration areas include:
 
-- **Shell Aliases**: Located in `.zshrc` or `.bashrc`
+- **Shell Aliases**: Located in `.zshrc`
 - **Editor Settings**: Vim/Neovim configuration files
-- **Git Configuration**: `.gitconfig` for version control settings
+- **Tool Configuration**: Settings under `.config/` (Neovim, WezTerm, Starship)
 - **Environment Variables**: `.env` or shell-specific environment files
 
 ### Environment-Specific Settings
 
-Configuration files support environment-specific overrides:
+Configuration supports local machine-specific overrides:
 
 ```bash
 # Local overrides (not tracked in git)
-~/.dotfiles/local/.zshrc.local
-~/.dotfiles/local/.gitconfig.local
+~/.zshrc.local
 ```
 
 ## Repository Structure
@@ -166,15 +149,9 @@ Configuration files support environment-specific overrides:
 ```text
 dotfiles/
 ├── README.md              # This file
-├── LICENSE                # License information
-├── install.sh             # Installation script
 ├── .zshrc                 # Zsh configuration
-├── .bashrc                # Bash configuration
-├── .gitconfig             # Git configuration
-├── .vimrc                 # Vim configuration
-├── bin/                   # Custom scripts and utilities
-├── config/                # Additional configuration files
-└── docs/                  # Additional documentation
+├── .config/               # Tool and application configurations
+└── .git/                  # Git repository metadata
 ```
 
 ## Usage
@@ -192,14 +169,14 @@ cd ~/.dotfiles
 # Pull latest changes
 git pull origin main
 
-# Apply updates (if installation script handles this)
-./install.sh --update
+# Reload shell config after updates
+source ~/.zshrc
 ```
 
 ### Adding New Configurations
 
 1. Add your configuration file to the repository
-2. Update the installation script if needed
+2. Update documentation if needed
 3. Commit and push changes:
 
    ```bash
@@ -215,7 +192,7 @@ git pull origin main
 - **Update Dependencies**: Keep system packages and tools up to date
 - **Review Configuration**: Periodically review and optimize settings
 - **Backup**: Ensure dotfiles are backed up (version control provides this)
-- **Testing**: Test configurations on new systems before deployment
+- **Testing**: Test configuration changes in a fresh shell before committing
 
 ### Version Management
 
@@ -237,7 +214,7 @@ This repository uses semantic versioning for major releases:
 
 ```bash
 # Reload shell configuration
-source ~/.zshrc  # or source ~/.bashrc
+source ~/.zshrc
 ```
 
 #### Symbolic Link Conflicts
@@ -254,27 +231,13 @@ mv ~/.zshrc ~/.zshrc.backup
 ln -s ~/.dotfiles/.zshrc ~/.zshrc
 ```
 
-#### Permission Issues
-
-**Problem**: Installation script fails due to permissions.
-
-**Solution**:
-
-```bash
-# Make script executable
-chmod +x install.sh
-
-# Run with appropriate permissions
-./install.sh
-```
-
 ### Getting Help
 
 If you encounter issues not covered here:
 
 1. Check the [Issues](https://github.com/worlddrknss/dotfiles/issues) page
 2. Review recent commits for changes
-3. Consult the documentation in the `docs/` directory
+3. Review README updates in recent commits
 
 ## Contributing
 
@@ -283,7 +246,7 @@ Contributions are welcome! Please follow these guidelines:
 1. **Fork the repository**
 2. **Create a feature branch**: `git checkout -b feature/amazing-feature`
 3. **Make your changes**: Follow existing code style and conventions
-4. **Test thoroughly**: Ensure changes work across different systems
+4. **Test thoroughly**: Ensure changes work on macOS
 5. **Commit changes**: Use clear, descriptive commit messages
 6. **Push to branch**: `git push origin feature/amazing-feature`
 7. **Open a Pull Request**: Provide detailed description of changes
@@ -293,18 +256,14 @@ Contributions are welcome! Please follow these guidelines:
 - Follow existing code style and formatting
 - Add comments for complex configurations
 - Update documentation for new features
-- Test on multiple operating systems when possible
+- Test on current and recent macOS versions when possible
 - Keep commits focused and atomic
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Support
 
 ### Resources
 
-- **Documentation**: See `docs/` directory for detailed documentation
+- **Documentation**: See this README for setup and usage notes
 - **Issues**: Report bugs or request features via [GitHub Issues](https://github.com/worlddrknss/dotfiles/issues)
 - **Discussions**: Join discussions in [GitHub Discussions](https://github.com/worlddrknss/dotfiles/discussions)
 
@@ -317,6 +276,6 @@ For questions or support:
 
 ---
 
-**Last Updated**: 2026-01-17
+**Last Updated**: 2026-06-19
 **Maintainer**: worlddrknss
 

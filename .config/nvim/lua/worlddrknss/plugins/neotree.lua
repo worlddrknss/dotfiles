@@ -20,6 +20,6 @@ return {
             },
         },
     },
-    lazy = false, -- neo-tree will lazily load itself
+    lazy = false, -- load neo-tree at startup
   }
 }

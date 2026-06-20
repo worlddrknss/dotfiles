@@ -1,12 +1,16 @@
 # ============================================================
 # Environment / Tooling
 # ============================================================
-eval "$(/opt/homebrew/bin/mise activate zsh)"
+if [[ -x /opt/homebrew/bin/mise ]]; then
+  eval "$(/opt/homebrew/bin/mise activate zsh)"
+fi
 
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 export EDITOR="nvim"
 
-source <(fzf --zsh)
+if command -v fzf &> /dev/null; then
+  source <(fzf --zsh)
+fi
 
 # ============================================================
 # History
@@ -29,12 +33,16 @@ fi
 # ============================================================
 # Autosuggestions (FIRST)
 # ============================================================
-source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+if [[ -r /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
+  source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+fi
 
 # ============================================================
 # Autocomplete (SECOND)
 # ============================================================
-source /opt/homebrew/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh
+if [[ -r /opt/homebrew/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh ]]; then
+  source /opt/homebrew/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh
+fi
 
 # ------------------------------------------------------------
 # Disable autocomplete for zoxide (j / z) to let autosuggestions work
@@ -48,17 +56,23 @@ ZSH_AUTOSUGGEST_USE_ASYNC=1
 ZSH_AUTOSUGGEST_MANUAL_REBIND=1
 ZSH_AUTOSUGGEST_STRATEGY=(completion history)
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=244,bold'
-_zsh_autosuggest_start
+if (( $+functions[_zsh_autosuggest_start] )); then
+  _zsh_autosuggest_start
+fi
 
 # ============================================================
 # Prompt
 # ============================================================
-eval "$(starship init zsh)"
+if command -v starship &> /dev/null; then
+  eval "$(starship init zsh)"
+fi
 
 # ============================================================
 # Syntax Highlighting (MUST BE LAST)
 # ============================================================
-source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+if [[ -r /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
+  source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
 
 # ============================================================
 # Kubernetes
@@ -113,6 +127,12 @@ alias rgn='rg --line-number'
 # Functions
 # ============================================================
 csh() {
+  local ssh_config="$HOME/.ssh/config"
+  if [[ ! -r "$ssh_config" ]]; then
+    echo "csh: missing or unreadable $ssh_config" >&2
+    return 1
+  fi
+
   local host port
   host=$(
     awk '
@@ -121,14 +141,14 @@ csh() {
           if ($i !~ "[*?]") print $i
         }
       }
-    ' ~/.ssh/config | sort -u | fzf --prompt="SSH > "
+    ' "$ssh_config" | sort -u | fzf --prompt="SSH > "
   )
   [[ -z "$host" ]] && return
   local cfg_port
   cfg_port=$(awk -v host="$host" '
     $1 == "Host" { found = 0; for (i = 2; i <= NF; i++) if ($i == host) found = 1 }
     found && $1 == "Port" { print $2; exit }
-  ' ~/.ssh/config)
+  ' "$ssh_config")
   : "${cfg_port:=22}"
   read -r "port?Port (${cfg_port}): "
   : "${port:=$cfg_port}"
@@ -227,7 +247,9 @@ zle -N toggle_k8s_widget toggle_k8s
 # Keybindings
 # ============================================================
 # Tab → accept autosuggestion (Fish-style)
-bindkey '^I' autosuggest-accept
+if (( $+widgets[autosuggest-accept] )); then
+  bindkey '^I' autosuggest-accept
+fi
 
 # Toggle K8s visibility widget
 bindkey '\e[1;P1' toggle_k8s_widget
@@ -246,7 +268,9 @@ export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 # ============================================================
 # Zoxide (must be initialized last)
 # ============================================================
-eval "$(zoxide init zsh)"
+if command -v zoxide &> /dev/null; then
+  eval "$(zoxide init zsh)"
+fi
 
 # ============================================================
 # Local overrides (machine-specific, untracked)
