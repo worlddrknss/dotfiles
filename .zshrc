@@ -165,7 +165,10 @@ csh() {
   local attempt try_port
   for attempt in 0 1 2 3; do
     try_port=$((port + attempt))
-    if nc -z -w 5 "$real_host" "$try_port" 2>/dev/null; then
+    # -G bounds the TCP connect itself; -w only covers idle time on an
+    # already-established connection, so a filtered port would otherwise
+    # hang for the ~75s kernel connect timeout.
+    if nc -z -G 3 -w 3 "$real_host" "$try_port" 2>/dev/null; then
       _csh_connect "$host" "$try_port"
       return
     fi
