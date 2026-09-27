@@ -306,6 +306,13 @@ rmknown() {
   sed -i '' "${line}d" "$file"
 }
 
+# Update dotfiles, packages and plugins, then reload this shell. A function
+# (not a script) so `exec zsh` replaces the current shell and picks up changes.
+# Arguments go to update.sh, e.g. `dotup --select`.
+dotup() {
+  "$HOME/dotfiles/update.sh" "$@" && exec zsh
+}
+
 toggle_k8s() {
   if [[ -n "$STARSHIP_K8S_VISIBLE" ]]; then
     unset STARSHIP_K8S_VISIBLE

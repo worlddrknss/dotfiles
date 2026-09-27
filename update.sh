@@ -114,4 +114,4 @@ fi
 if [[ -n "$(git status --porcelain -- .config/nvim/lazy-lock.json)" ]]; then
   info "Plugin versions changed: review and commit .config/nvim/lazy-lock.json"
 fi
-info "Done. Run: exec zsh (to reload the shell)"
+info "Done. Run: exec zsh (to reload the shell); the dotup shell function does both steps"

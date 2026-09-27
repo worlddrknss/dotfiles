@@ -254,6 +254,7 @@ LSP uses Neovim's built-in defaults: `K` hover, `grn` rename, `gra` code action,
 | `rgi` / `rgf` / `rgn` | `rg` ignore-case / list files / with line numbers |
 | `csh` | Pick an SSH host from `~/.ssh/config` with fzf and connect |
 | `rmknown <line>` | Delete a line from `~/.ssh/known_hosts` |
+| `dotup [--select]` | Run `update.sh`, then reload the shell |
 
 ### Kubernetes aliases
 
@@ -298,10 +299,13 @@ After installation, the dotfiles work automatically. No additional steps are req
 ### Updating
 
 ```bash
-~/dotfiles/update.sh            # core + your saved groups
-~/dotfiles/update.sh --select   # re-open the checklist to add or remove groups
-exec zsh
+dotup                           # update.sh, then reload the shell (exec zsh)
+dotup --select                  # same, re-opening the group checklist first
 ```
+
+`dotup` is a shell function from `.zshrc` that runs `~/dotfiles/update.sh` with any arguments
+and, if it succeeds, replaces the current shell with a fresh one. A script can't reload the
+shell that launched it, so running `update.sh` directly needs a manual `exec zsh` afterwards.
 
 [`update.sh`](update.sh) will:
 
