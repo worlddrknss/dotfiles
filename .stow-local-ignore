@@ -1,0 +1,11 @@
+# Files in the repo that should not be symlinked into $HOME.
+# Defining this file replaces stow's built-in ignore list, so the
+# defaults are repeated here.
+\.git
+\.gitignore
+\.gitmodules
+\.DS_Store
+^/README.*
+^/LICENSE.*
+^/install\.sh
+^/\.stow-local-ignore

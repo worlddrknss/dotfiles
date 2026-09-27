@@ -64,9 +64,13 @@ This setup depends on the following Homebrew packages (install on macOS with Hom
 - eza
 - figlet
 - fzf
+- grep (GNU grep, used ahead of the macOS BSD grep)
+- mise
 - neovim
 - ripgrep
+- starship
 - stow
+- tree-sitter-cli (builds Neovim treesitter parsers)
 - zoxide
 - zsh-autocomplete
 - zsh-autosuggestions
@@ -79,10 +83,8 @@ Install them with:
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 # Install required packages
-brew install bat eza figlet fzf neovim ripgrep stow zoxide starship mise
-
-# Some zsh plugins may be installed via brew or cloned into your zsh plugins directory:
-# e.g. brew install zsh-autosuggestions zsh-syntax-highlighting
+brew install bat eza figlet fzf grep mise neovim ripgrep starship stow tree-sitter-cli zoxide \
+  zsh-autocomplete zsh-autosuggestions zsh-syntax-highlighting
 ```
 
 ### Optional Extras
@@ -91,38 +93,37 @@ brew install bat eza figlet fzf neovim ripgrep stow zoxide starship mise
 
 ## Installation
 
-### Manual Installation
+### Quick install (new machine)
 
-1. **Clone the repository**:
+```bash
+curl -fsSL https://raw.githubusercontent.com/worlddrknss/dotfiles/main/install.sh | bash
+```
 
-   ```bash
-   git clone https://github.com/worlddrknss/dotfiles.git ~/.dotfiles
-   ```
+[`install.sh`](install.sh) will:
 
-2. **Review configuration files**:
+1. Install Homebrew if it isn't already installed
+2. Install the Homebrew packages listed above (plus the WezTerm app on macOS)
+3. Clone this repo to `~/dotfiles` (skipped if it's already there)
+4. Move any existing files that would be overwritten to `~/.dotfiles-backup/<timestamp>/`
+5. Run `stow .` to symlink everything into your home directory
+6. Install Neovim plugins
+7. Delete the downloaded installer and start a new `zsh` with the config loaded
 
-   ```bash
-   cd ~/.dotfiles
-   ls -la
-   ```
+It's safe to re-run. The copy of `install.sh` inside `~/dotfiles` is never deleted.
 
-3. **Create symbolic links** (or copy files as needed):
+> The WezTerm config uses the **DankMono Nerd Font**, which isn't on Homebrew; install it
+> separately or change `config.font` in `.config/wezterm/wezterm.lua`.
 
-   ```bash
-   # Example for .zshrc
-   ln -s ~/.dotfiles/.zshrc ~/.zshrc
-   ```
+### Manual installation
 
-4. **Reload your shell**:
+```bash
+git clone https://github.com/worlddrknss/dotfiles.git ~/dotfiles
+cd ~/dotfiles
+stow .          # symlink everything into $HOME
+exec zsh        # reload the shell
+```
 
-   ```bash
-   source ~/.zshrc
-   ```
-
-### Installation Options
-
-- **Full Installation**: Link all relevant configuration files
-- **Selective Installation**: Link only the components you want
+Files listed in [`.stow-local-ignore`](.stow-local-ignore) (README, install.sh, git files) are not linked.
 
 ## Configuration
 
@@ -164,13 +165,14 @@ After installation, the dotfiles work automatically. No additional steps are req
 
 ```bash
 # Navigate to dotfiles directory
-cd ~/.dotfiles
+cd ~/dotfiles
 
 # Pull latest changes
 git pull origin main
 
-# Reload shell config after updates
-source ~/.zshrc
+# Link any newly added files, then reload the shell
+stow .
+exec zsh
 ```
 
 ### Adding New Configurations
@@ -224,11 +226,12 @@ source ~/.zshrc
 **Solution**:
 
 ```bash
-# Backup existing files
-mv ~/.zshrc ~/.zshrc.backup
+# Re-run the installer: it moves conflicting files to ~/.dotfiles-backup/ and re-stows
+bash ~/dotfiles/install.sh
 
-# Create new symbolic link
-ln -s ~/.dotfiles/.zshrc ~/.zshrc
+# Or by hand: back up the file, then stow
+mv ~/.zshrc ~/.zshrc.backup
+cd ~/dotfiles && stow .
 ```
 
 ### Getting Help
