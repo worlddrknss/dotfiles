@@ -15,4 +15,4 @@ vim.keymap.set('n', '<leader>fg', telescope_action('live_grep'), { desc = 'Teles
 vim.keymap.set('n', '<leader>fb', telescope_action('buffers'), { desc = 'Telescope buffers' })
 vim.keymap.set('n', '<leader>fh', telescope_action('help_tags'), { desc = 'Telescope help tags' })
 
-vim.keymap.set('n', '<leader>e', '<Cmd>Neotree toggle<CR>')
+vim.keymap.set('n', '<leader>e', '<Cmd>Neotree toggle<CR>', { desc = 'Toggle file explorer' })
