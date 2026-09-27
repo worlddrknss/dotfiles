@@ -10,5 +10,7 @@
 ^/install\.sh
 ^/update\.sh
 ^/Brewfile.*
+^/brewfiles
+^/lib
 ^/\.stow-local-ignore
 ^/\.stowrc

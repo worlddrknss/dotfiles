@@ -38,7 +38,7 @@ doesn't fit.
 - **CLI tools**: `eza`, `bat`, `ripgrep`, `fd`, GNU grep, OpenSSL 3, `delta`, `lazygit`, `xh`, `tldr` and more
 - **Kubernetes**: `kubectl` aliases, `k9s`, `stern`, krew `ctx`/`ns`, and a prompt toggle for the current context
 - **Runtimes**: node, go, bun, python and rust managed by mise
-- **Apps**: WezTerm, VS Code, Raycast, OrbStack (Docker and local Kubernetes), Postman, DBeaver, Freelens, ngrok, LM Studio, Claude Code and CaskHub (a GUI for Homebrew casks)
+- **Apps**: WezTerm, VS Code, Raycast, OrbStack (Docker and local Kubernetes), Postman and CaskHub (a GUI for Homebrew casks)
 - **Cloud and secrets**: `awscli`, OpenTofu, `sops` + `age`, `gitleaks`
 - **One-command setup and updates**: everything is in a `Brewfile`, linked with GNU Stow
 
@@ -61,13 +61,21 @@ Before installing these dotfiles, ensure you have the following:
 
 ### Homebrew packages
 
-All packages are listed in the [`Brewfile`](Brewfile) (shell plugins, CLI tools, Neovim and
-its formatters, mise, the JetBrainsMono Nerd Font, Claude Code, and the macOS apps listed under Features).
-`install.sh` installs them for you, or run:
+Packages are split into a required core and optional groups:
 
-```bash
-brew bundle --file ~/dotfiles/Brewfile
-```
+| File | Group | Default |
+| --- | --- | --- |
+| [`Brewfile`](Brewfile) | **core**: zsh plugins, Starship, fzf, zoxide, eza, bat, ripgrep, fd, GNU grep, git, stow, mise, Neovim | always |
+| [`brewfiles/neovim-extras.Brewfile`](brewfiles/neovim-extras.Brewfile) | prettier, shfmt, lazygit, delta | on |
+| [`brewfiles/cli.Brewfile`](brewfiles/cli.Brewfile) | htop, dust, duf, tldr, xh, jq, yq, tmux, gh, uv, OpenSSL 3 | on |
+| [`brewfiles/fonts.Brewfile`](brewfiles/fonts.Brewfile) | JetBrainsMono Nerd Font | on |
+| [`brewfiles/kubernetes.Brewfile`](brewfiles/kubernetes.Brewfile) | kubectl, krew, k9s, stern | off |
+| [`brewfiles/cloud.Brewfile`](brewfiles/cloud.Brewfile) | awscli, OpenTofu, sops + age, gitleaks, git-filter-repo, psql | off |
+| [`brewfiles/apps.Brewfile`](brewfiles/apps.Brewfile) | WezTerm, VS Code, Raycast, OrbStack, Postman, CaskHub (macOS) | off |
+
+`install.sh` lets you pick groups; all configs are linked either way, and the shell skips
+anything that isn't installed. To add a group, drop a new `brewfiles/<name>.Brewfile` with
+`# @desc ...` and `# @default on|off` header lines and it shows up in the picker.
 
 ### Runtimes
 
@@ -91,11 +99,24 @@ curl -fsSL https://raw.githubusercontent.com/worlddrknss/dotfiles/main/install.s
 
 1. Install Homebrew if it isn't already installed
 2. Clone this repo to `~/dotfiles` (skipped if it's already there)
-3. Install everything in the `Brewfile`
+3. Show a checklist of optional package groups (`x` to toggle, `enter` to confirm), then
+   install the core packages plus the groups you picked
 4. Move any existing files that would be overwritten to `~/.dotfiles-backup/<timestamp>/`
 5. Run `stow .` to symlink everything into your home directory
 6. Install runtimes with `mise install`, then Neovim plugins
 7. Delete the downloaded installer and start a new `zsh` with the config loaded
+
+Skip the checklist with flags (pass them after `bash -s --` when piping from curl):
+
+```bash
+bash install.sh --all                      # every group
+bash install.sh --core                     # core only
+bash install.sh --groups kubernetes,cloud  # core + these groups
+curl -fsSL https://raw.githubusercontent.com/worlddrknss/dotfiles/main/install.sh | bash -s -- --all
+```
+
+Without a terminal (e.g. in CI) and without flags, only the core is installed. Your choice
+is saved to `~/.config/dotfiles/groups` for `update.sh`.
 
 It's safe to re-run. The copy of `install.sh` inside `~/dotfiles` is never deleted.
 
@@ -111,7 +132,7 @@ stow .          # symlink everything into $HOME
 exec zsh        # reload the shell
 ```
 
-Files listed in [`.stow-local-ignore`](.stow-local-ignore) (README, install.sh, update.sh, Brewfile, git files) are not linked.
+Files listed in [`.stow-local-ignore`](.stow-local-ignore) (README, install.sh, update.sh, Brewfile, brewfiles/, lib/, git files) are not linked.
 
 ## Configuration
 
@@ -246,7 +267,9 @@ dotfiles/
 ├── README.md              # This file
 ├── install.sh             # Bootstrap script for new machines
 ├── update.sh              # Pull, upgrade packages/runtimes/plugins, re-stow
-├── Brewfile               # Homebrew packages
+├── Brewfile               # Core Homebrew packages
+├── brewfiles/             # Optional package groups (picked in install.sh)
+├── lib/groups.sh          # Group picker shared by install.sh and update.sh
 ├── .gitignore             # Ignores .DS_Store and Brewfile.lock.json
 ├── .stow-local-ignore     # Files stow should not link
 ├── .stowrc               # Stow options (--no-folding: link files, not whole folders)
@@ -264,22 +287,23 @@ After installation, the dotfiles work automatically. No additional steps are req
 ### Updating
 
 ```bash
-~/dotfiles/update.sh
+~/dotfiles/update.sh            # core + your saved groups
+~/dotfiles/update.sh --select   # re-open the checklist to add or remove groups
 exec zsh
 ```
 
 [`update.sh`](update.sh) will:
 
 1. Pull the latest dotfiles (skipped if you have uncommitted changes, so it never merges over your work)
-2. Install anything new in the `Brewfile`, then `brew upgrade`
+2. Install anything new in the core `Brewfile` and your groups, then `brew upgrade`
 3. Run `stow .` to link newly added files
 4. Run `mise install` and `mise upgrade`
 5. Update Neovim plugins (`Lazy sync`) and treesitter parsers
 6. Refresh `tldr` pages and krew plugins
 
-If plugin versions changed, commit the updated `.config/nvim/lazy-lock.json`.
-It doesn't remove packages that were dropped from the `Brewfile`; run
-`brew bundle cleanup --file ~/dotfiles/Brewfile` to review those.
+It also accepts `--all`, `--core` and `--groups a,b`. Unticking a group stops updating it but
+doesn't uninstall anything. If plugin versions changed, commit the updated
+`.config/nvim/lazy-lock.json`.
 
 ### Adding New Configurations
 

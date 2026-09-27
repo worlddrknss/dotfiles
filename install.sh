@@ -2,7 +2,7 @@
 # Bootstrap these dotfiles on a new machine:
 #   1. install Homebrew if missing
 #   2. clone the repo to ~/dotfiles (if not already there)
-#   3. install the packages in the Brewfile
+#   3. pick optional package groups, then install core + chosen groups
 #   4. back up conflicting files, then `stow .` into $HOME
 #   5. install runtimes with mise, then Neovim plugins
 #   6. delete this installer (unless it's the copy inside the repo)
@@ -10,7 +10,11 @@
 #
 # Usage:
 #   curl -fsSL https://raw.githubusercontent.com/worlddrknss/dotfiles/main/install.sh | bash
-# or download it and run: bash install.sh
+#   bash install.sh [--all | --core | --groups a,b]
+#
+# Packages: Brewfile is the core (always installed); brewfiles/<group>.Brewfile
+# are optional. Without flags you get an interactive picker (or core only when
+# there's no terminal). The choice is saved for update.sh.
 set -euo pipefail
 
 REPO_URL="https://github.com/worlddrknss/dotfiles.git"
@@ -19,6 +23,32 @@ DOTFILES_DIR="$HOME/dotfiles"
 info() { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
 warn() { printf '\033[1;33mwarning:\033[0m %s\n' "$*" >&2; }
 die()  { printf '\033[1;31merror:\033[0m %s\n' "$*" >&2; exit 1; }
+
+usage() {
+  cat <<'USAGE'
+Usage: install.sh [--all | --core | --groups a,b]
+
+  (no flags)     choose optional package groups interactively
+  --all          install every group
+  --core         install only the core packages
+  --groups a,b   install core plus the listed groups (see brewfiles/)
+
+Change groups later with: ~/dotfiles/update.sh --select
+USAGE
+}
+
+# Validate options up front (they're applied after the repo is cloned, since
+# the group helpers live in it)
+ARGS=("$@")
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -h|--help) usage; exit 0 ;;
+    --all|--core|--select|--groups=*) ;;
+    --groups) [[ $# -ge 2 ]] || die "--groups needs a value, e.g. --groups kubernetes,cloud"; shift ;;
+    *) usage >&2; die "unknown option: $1" ;;
+  esac
+  shift
+done
 
 # Resolve this script's path before we cd anywhere (empty when piped from curl)
 SCRIPT_PATH=""
@@ -65,11 +95,23 @@ fi
 cd "$DOTFILES_DIR"
 
 # ------------------------------------------------------------
-# Packages (single source of truth: Brewfile)
+# Package groups (helpers in lib/groups.sh)
 # ------------------------------------------------------------
-info "Installing packages from Brewfile"
-brew bundle --file "$DOTFILES_DIR/Brewfile" ||
-  warn "some Brewfile entries failed (e.g. an app already installed outside Homebrew); continuing"
+# shellcheck source=lib/groups.sh
+source "$DOTFILES_DIR/lib/groups.sh"
+set -- "${ARGS[@]+"${ARGS[@]}"}"
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --groups) [[ $# -ge 2 ]] || die "--groups needs a value, e.g. --groups kubernetes,cloud"
+              MODE=list; REQUESTED="$2"; shift ;;
+    -h|--help) usage; exit 0 ;;
+    *) parse_group_arg "$1" || { usage >&2; die "unknown option: $1"; } ;;
+  esac
+  shift
+done
+
+resolve_groups select
+bundle_selected
 
 # ------------------------------------------------------------
 # Stow (back up anything that would block the symlinks)

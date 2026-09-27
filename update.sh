@@ -1,21 +1,38 @@
 #!/usr/bin/env bash
 # Keep an existing setup current:
 #   1. pull the latest dotfiles (skipped if the repo has local changes)
-#   2. install new Brewfile entries, then upgrade Homebrew packages
+#   2. install new entries for core + your package groups, then brew upgrade
 #   3. re-stow to link any new files
 #   4. install/upgrade mise runtimes
 #   5. update Neovim plugins (lazy.nvim) and treesitter parsers
 #   6. refresh tldr pages and krew plugins
 #
-# Usage: ~/dotfiles/update.sh
+# Usage: ~/dotfiles/update.sh [--select | --all | --core | --groups a,b]
+#   (no flags)   update core + the groups saved by install.sh
+#   --select     re-open the group picker to add/remove groups
+#   --all        use every group; --core: core only; --groups a,b: those groups
+# Deselecting a group stops updating it; it doesn't uninstall anything.
 set -euo pipefail
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 info() { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
 warn() { printf '\033[1;33mwarning:\033[0m %s\n' "$*" >&2; }
+die()  { printf '\033[1;31merror:\033[0m %s\n' "$*" >&2; exit 1; }
 
 cd "$DOTFILES_DIR"
+
+usage() { sed -n 's/^# \{0,1\}//; /^Usage:/,/uninstall anything/p' "$0"; }
+ORIG_ARGS=("$@")
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -h|--help) usage; exit 0 ;;
+    --all|--core|--select|--groups=*) ;;
+    --groups) [[ $# -ge 2 ]] || die "--groups needs a value, e.g. --groups kubernetes,cloud"; shift ;;
+    *) usage >&2; die "unknown option: $1" ;;
+  esac
+  shift
+done
 
 # ------------------------------------------------------------
 # Dotfiles
@@ -33,8 +50,19 @@ fi
 if command -v brew >/dev/null 2>&1; then
   info "Updating Homebrew"
   brew update
-  info "Installing new Brewfile entries"
-  brew bundle --file "$DOTFILES_DIR/Brewfile" || warn "some Brewfile entries failed; continuing"
+  # After the pull, so new groups and new entries in brewfiles/ are picked up
+  # shellcheck source=lib/groups.sh
+  source "$DOTFILES_DIR/lib/groups.sh"
+  set -- "${ORIG_ARGS[@]+"${ORIG_ARGS[@]}"}"
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --groups) MODE=list; REQUESTED="$2"; shift ;;
+      *) parse_group_arg "$1" ;;
+    esac
+    shift
+  done
+  resolve_groups saved
+  bundle_selected
   info "Upgrading Homebrew packages"
   brew upgrade || warn "brew upgrade had failures; continuing"
 else
