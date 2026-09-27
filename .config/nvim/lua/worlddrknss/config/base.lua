@@ -12,3 +12,4 @@ vim.o.splitright = true -- Open vertical splits to the right
 vim.o.splitbelow = true -- Open horizontal splits below
 vim.o.scrolloff = 8 -- Keep context lines above/below the cursor
 vim.o.updatetime = 250 -- Faster CursorHold (diagnostic hover, swap writes)
+vim.o.clipboard = "unnamedplus" -- Yank/paste use the system clipboard
