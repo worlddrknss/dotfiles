@@ -8,4 +8,7 @@
 ^/README.*
 ^/LICENSE.*
 ^/install\.sh
+^/update\.sh
+^/Brewfile.*
 ^/\.stow-local-ignore
+^/\.stowrc
