@@ -6,6 +6,9 @@ if [[ -x /opt/homebrew/bin/mise ]]; then
 fi
 
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+
+# GNU grep over macOS BSD grep (supports -P, --include, etc.; brew install grep)
+[[ -d /opt/homebrew/opt/grep/libexec/gnubin ]] && export PATH="/opt/homebrew/opt/grep/libexec/gnubin:$PATH"
 export EDITOR="nvim"
 
 if command -v fzf &> /dev/null; then
@@ -84,6 +87,12 @@ alias kns="k ns"
 alias kn="k ns -c"
 alias kg="k get"
 alias kd="k describe"
+alias kgp="k get pods"
+alias kga="k get all"
+alias kl="k logs -f"
+alias kex="k exec -it"
+alias kaf="k apply -f"
+alias kdel="k delete"
 
 if command -v kubectl &> /dev/null; then
   source <(kubectl completion zsh)
@@ -93,33 +102,44 @@ fi
 # ============================================================
 # System aliases
 # ============================================================
-# Cat replacement — no paging, line numbers optional (hide file header/time)
-alias cat='bat --paging=never --style=grid,-header'
+# Bat — each alias only if the tool exists, so a fresh machine keeps working
+if command -v bat &> /dev/null; then
+  # Cat replacement — no paging, no file header
+  alias cat='bat --paging=never --style=grid,-header'
+  # Interactive bat — with pager and line numbers
+  alias b='bat --paging=always --style=grid,numbers --decorations=always'
+fi
 
-# Interactive bat — with pager and line numbers
-alias b='bat --paging=always --style=grid,numbers --decorations=always'
-
-# FZF with preview
-alias f='fzf --height 40% --layout=reverse --preview="bat --style=numbers --color=always {}"'
+# FZF with preview (directories get a tree listing instead of a bat error)
+alias f='fzf --height 40% --layout=reverse --preview="[[ -d {} ]] && eza --tree --level=2 --color=always {} || bat --style=numbers --color=always {}"'
 
 # Neovim
 alias n='nvim'
 alias nv='nvim +'
 
-# Zoxide
-alias cd='z'
-alias j='z'
-alias ji='zi'
-alias jh='j -h'
-
 # Eza
-alias ls='eza -alh --group-directories-first --git'
+if command -v eza &> /dev/null; then
+  # eza reads file names from a non-tty stdin, so with no path it prints
+  # nothing in loops/pipelines/ssh. Default the path to '.'.
+  _eza() {
+    local arg
+    for arg in "$@"; do
+      [[ $arg != -* ]] && { eza "$@"; return; }
+    done
+    eza "$@" .
+  }
+  alias ls='_eza -alh --group-directories-first --git'
+  alias l='_eza -1 --group-directories-first'
+  alias lt='_eza --tree --level=2 --group-directories-first --git-ignore'
+fi
+
+# Grep — keep real grep: rg reinterprets grep flags (-r is --replace, -E is --encoding)
+alias grep='grep --color=auto'
+alias egrep='grep -E --color=auto'
+alias fgrep='grep -F --color=auto'
 
 # Ripgrep
-alias grep='rg --color=auto'
-alias fgrep='rg --fixed-strings --color=auto'
-alias egrep='rg --color=auto --regexp'
-alias rgi='rg --ignore-case --color=auto'
+alias rgi='rg --ignore-case'
 alias rgf='rg --files'
 alias rgn='rg --line-number'
 
@@ -273,6 +293,10 @@ export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 # ============================================================
 if command -v zoxide &> /dev/null; then
   eval "$(zoxide init zsh)"
+  alias cd='z'
+  alias j='z'
+  alias ji='zi'
+  alias jl='zoxide query -ls'
 fi
 
 # ============================================================
