@@ -5,15 +5,18 @@ if [[ -x /opt/homebrew/bin/mise ]]; then
   eval "$(/opt/homebrew/bin/mise activate zsh)"
 fi
 
-export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+# Keep PATH free of duplicates (nested shells, mise re-activation)
+typeset -U path PATH
 
-# GNU grep over macOS BSD grep (supports -P, --include, etc.; brew install grep)
-[[ -d /opt/homebrew/opt/grep/libexec/gnubin ]] && export PATH="/opt/homebrew/opt/grep/libexec/gnubin:$PATH"
+path=(
+  /opt/homebrew/opt/grep/libexec/gnubin(N)  # GNU grep over BSD grep (brew install grep)
+  /opt/homebrew/opt/libpq/bin(N)
+  ${KREW_ROOT:-$HOME/.krew}/bin
+  $path
+  $HOME/.lmstudio/bin(N)
+)
 export EDITOR="nvim"
-
-if command -v fzf &> /dev/null; then
-  source <(fzf --zsh)
-fi
+export VISUAL="$EDITOR"
 
 # ============================================================
 # History
@@ -22,16 +25,8 @@ HISTFILE="$HOME/.zsh_history"
 HISTSIZE=100000
 SAVEHIST=100000
 setopt HIST_IGNORE_DUPS HIST_IGNORE_SPACE SHARE_HISTORY HIST_VERIFY
-
-# ============================================================
-# Completion system (must be early)
-# ============================================================
-autoload -Uz compinit
-if [[ -n ~/.zcompdump(#qN.mh+24) ]]; then
-  compinit
-else
-  compinit -C
-fi
+setopt EXTENDED_HISTORY HIST_EXPIRE_DUPS_FIRST HIST_REDUCE_BLANKS
+setopt INTERACTIVE_COMMENTS  # allow '# comments' in pasted commands
 
 # ============================================================
 # Autosuggestions (FIRST)
@@ -41,10 +36,20 @@ if [[ -r /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; the
 fi
 
 # ============================================================
-# Autocomplete (SECOND)
+# Autocomplete (SECOND) — runs compinit itself, so only call it as a fallback
 # ============================================================
 if [[ -r /opt/homebrew/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh ]]; then
   source /opt/homebrew/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh
+else
+  autoload -Uz compinit
+  # Full rebuild once a day, otherwise skip the security check (-C)
+  () {
+    if [[ $# -gt 0 ]]; then compinit; else compinit -C; fi
+  } ~/.zcompdump(N.mh+24)
+fi
+
+if command -v fzf &> /dev/null; then
+  source <(fzf --zsh)
 fi
 
 # ------------------------------------------------------------
@@ -68,13 +73,6 @@ fi
 # ============================================================
 if command -v starship &> /dev/null; then
   eval "$(starship init zsh)"
-fi
-
-# ============================================================
-# Syntax Highlighting (MUST BE LAST)
-# ============================================================
-if [[ -r /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
-  source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
 
 # ============================================================
@@ -220,7 +218,7 @@ _csh_connect() {
 
     offending=$(command grep -oE 'Offending [A-Za-z0-9_-]+ key in [^:]+:[0-9]+' "$errfile" | tail -1)
     if [[ -z "$offending" ]]; then
-      cat "$errfile" >&2
+      command cat "$errfile" >&2
       rm -f "$errfile"
       return $rc
     fi
@@ -247,8 +245,12 @@ _csh_connect() {
 # "Offending RSA key in /Users/you/.ssh/known_hosts:42" in an ssh error.
 rmknown() {
   local line=$1 file=${2:-$HOME/.ssh/known_hosts}
-  if [[ -z "$line" ]]; then
+  if [[ "$line" != <-> ]]; then
     echo "Usage: rmknown <line_number> [known_hosts_file]" >&2
+    return 1
+  fi
+  if [[ ! -w "$file" ]]; then
+    echo "rmknown: cannot write $file" >&2
     return 1
   fi
   echo "Removing: $(sed -n "${line}p" "$file")"
@@ -282,14 +284,8 @@ bindkey '\e[1;P1' toggle_k8s_widget
 # ============================================================
 # [[ -o interactive ]] && fastfetch
 # [[ -o interactive ]] && figlet "WorldDrknss"
-# Added by LM Studio CLI (lms)
-export PATH="$PATH:/Users/worlddrknss/.lmstudio/bin"
-# End of LM Studio CLI section
-
-export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
-
 # ============================================================
-# Zoxide (must be initialized last)
+# Zoxide (after everything that touches chpwd/precmd)
 # ============================================================
 if command -v zoxide &> /dev/null; then
   eval "$(zoxide init zsh)"
@@ -303,3 +299,10 @@ fi
 # Local overrides (machine-specific, untracked)
 # ============================================================
 [[ -f "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"
+
+# ============================================================
+# Syntax Highlighting (MUST BE LAST — wraps every widget defined above)
+# ============================================================
+if [[ -r /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
+  source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
