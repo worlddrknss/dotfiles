@@ -242,7 +242,7 @@ LSP uses Neovim's built-in defaults: `K` hover, `grn` rename, `gra` code action,
 | `l` | `eza -1` (names only) |
 | `lt` | `eza --tree --level=2` (skips gitignored files) |
 | `cat` | `bat` without paging |
-| `b` | `bat` with pager and line numbers |
+| `b` | `bat` with line numbers (pager only for long files) |
 | `f` | `fzf` with file/directory preview |
 | `n` / `nv` | `nvim` / `nvim` at the last line |
 | `lg` | `lazygit` |

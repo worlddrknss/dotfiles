@@ -134,8 +134,8 @@ fi
 if command -v bat &> /dev/null; then
   # Cat replacement — no paging, no file header
   alias cat='bat --paging=never --style=grid,-header'
-  # Interactive bat — with pager and line numbers
-  alias b='bat --paging=always --style=grid,numbers --decorations=always'
+  # bat with line numbers: short files print inline, long ones open the pager
+  alias b='bat --style=grid,numbers'
 fi
 
 # FZF with preview (directories get a tree listing instead of a bat error)
