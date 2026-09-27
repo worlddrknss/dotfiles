@@ -48,6 +48,23 @@ else
   } ~/.zcompdump(N.mh+24)
 fi
 
+# Matching: exact → case-insensitive → partial words (f.b → foo.bar) → substring,
+# each tried only if the previous found nothing. Lets ~/zs find ~/.zshrc.
+zstyle ':completion:*' matcher-list '' \
+  'm:{[:lower:][:upper:]}={[:upper:][:lower:]}' \
+  'r:|[._-]=* r:|=*' \
+  'l:|=* r:|=*'
+
+# Complete hidden files without typing the leading dot. compinit resets
+# _comp_options and zsh-autocomplete defers it to the first prompt, so
+# append globdots once, right after that.
+_comp_globdots() {
+  _comp_options+=(globdots)
+  add-zsh-hook -d precmd _comp_globdots
+}
+autoload -Uz add-zsh-hook
+add-zsh-hook precmd _comp_globdots
+
 if command -v fzf &> /dev/null; then
   source <(fzf --zsh)
 fi
@@ -271,9 +288,18 @@ zle -N toggle_k8s_widget toggle_k8s
 # ============================================================
 # Keybindings
 # ============================================================
-# Tab → accept autosuggestion (Fish-style)
+# Tab → accept autosuggestion if one is shown (Fish-style), otherwise
+# fall back to zsh-autocomplete's complete-word (insert top completion)
+_tab_accept_or_complete() {
+  if [[ -n "$POSTDISPLAY" ]]; then
+    zle autosuggest-accept
+  else
+    zle complete-word -w
+  fi
+}
 if (( $+widgets[autosuggest-accept] )); then
-  bindkey '^I' autosuggest-accept
+  zle -N _tab_accept_or_complete
+  bindkey '^I' _tab_accept_or_complete
 fi
 
 # Toggle K8s visibility widget
