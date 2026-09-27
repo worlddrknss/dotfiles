@@ -30,6 +30,8 @@ brew "yq"
 brew "gh"
 brew "git"
 brew "git-delta"   # syntax-highlighted diffs (git pager)
+brew "git-filter-repo" # rewrite history (remove files/secrets)
+brew "gitleaks"    # scan repos for committed secrets
 brew "lazygit"
 
 # Kubernetes
@@ -38,8 +40,18 @@ brew "krew"        # kubectl plugins: ctx and ns (used by kcx/kns aliases)
 brew "k9s"
 brew "stern"       # tail logs across many pods
 
+# Cloud, infra and secrets
+brew "awscli"
+brew "opentofu"    # open-source Terraform
+brew "sops"        # encrypted secrets files
+brew "age"         # encryption backend for sops
+
+# Databases
+brew "libpq"       # psql and friends (added to PATH in .zshrc)
+
 # Runtimes (versions in .config/mise/config.toml)
 brew "mise"
+brew "uv"          # fast Python package/project manager
 
 # Neovim
 brew "neovim"
@@ -51,6 +63,9 @@ brew "shfmt"           # shell formatting (conform.nvim)
 cask "wezterm" if OS.mac?
 cask "visual-studio-code" if OS.mac?
 cask "caskhub" if OS.mac? # GUI for Homebrew casks; needs macOS 15+
+cask "raycast" if OS.mac? # launcher (Spotlight replacement); Apple Silicon only
+cask "orbstack" if OS.mac? # Docker + Linux VMs + local Kubernetes; provides the docker CLI (macOS 14+)
+cask "postman" if OS.mac? # API client
 
 # Fonts
 cask "font-jetbrains-mono-nerd-font" # fallback for the paid DankMono Nerd Font

@@ -38,7 +38,8 @@ doesn't fit.
 - **CLI tools**: `eza`, `bat`, `ripgrep`, `fd`, GNU grep, OpenSSL 3, `delta`, `lazygit`, `xh`, `tldr` and more
 - **Kubernetes**: `kubectl` aliases, `k9s`, `stern`, krew `ctx`/`ns`, and a prompt toggle for the current context
 - **Runtimes**: node, go, bun, python and rust managed by mise
-- **Apps**: WezTerm, VS Code and CaskHub (a GUI for Homebrew casks)
+- **Apps**: WezTerm, VS Code, Raycast, OrbStack (Docker and local Kubernetes), Postman, DBeaver, Freelens, ngrok, LM Studio, Claude Code and CaskHub (a GUI for Homebrew casks)
+- **Cloud and secrets**: `awscli`, OpenTofu, `sops` + `age`, `gitleaks`
 - **One-command setup and updates**: everything is in a `Brewfile`, linked with GNU Stow
 
 ## Prerequisites
@@ -61,7 +62,7 @@ Before installing these dotfiles, ensure you have the following:
 ### Homebrew packages
 
 All packages are listed in the [`Brewfile`](Brewfile) (shell plugins, CLI tools, Neovim and
-its formatters, mise, the JetBrainsMono Nerd Font, and on macOS the WezTerm, VS Code and CaskHub apps).
+its formatters, mise, the JetBrainsMono Nerd Font, Claude Code, and the macOS apps listed under Features).
 `install.sh` installs them for you, or run:
 
 ```bash
