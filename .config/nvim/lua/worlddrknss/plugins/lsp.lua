@@ -27,12 +27,12 @@ return {
         opts = function()
             local ensure_installed = { "lua_ls" }
 
+            -- bash, css and JS/TS servers are npm packages
             if vim.fn.executable("npm") == 1 then
                 vim.list_extend(ensure_installed, {
                     "bashls",
-                    "html",
                     "cssls",
-                    "angularls",
+                    "ts_ls",
                 })
             end
 
@@ -40,9 +40,9 @@ return {
                 table.insert(ensure_installed, "gopls")
             end
 
+            -- mason-lspconfig v2 enables installed servers via vim.lsp.enable()
             return {
                 ensure_installed = ensure_installed,
-                automatic_installation = true,
             }
         end,
     },
