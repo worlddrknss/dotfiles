@@ -1,6 +1,6 @@
 # Dotfiles
 
-> Professional development environment configuration files for macOS systems
+> An opinionated macOS dev setup: Zsh, Neovim, WezTerm and a curated set of CLI tools, installed with one command.
 
 [![Maintenance](https://img.shields.io/badge/maintained-yes-green.svg)](https://github.com/worlddrknss/dotfiles)
 
@@ -11,6 +11,7 @@
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
 - [Configuration](#configuration)
+- [Tools](#tools)
 - [Keybindings and Aliases](#keybindings-and-aliases)
 - [Repository Structure](#repository-structure)
 - [Usage](#usage)
@@ -21,24 +22,23 @@
 
 ## Overview
 
-This repository contains a curated collection of configuration files (dotfiles) designed to provide a consistent, efficient, and professional development environment on macOS. These configurations are optimized for productivity and follow industry best practices.
+This is my personal, opinionated development environment for macOS. It makes choices for you
+(OneDark everywhere, Neovim as the editor, modern replacements for `ls`/`cat`/`find`, Kubernetes
+shortcuts baked in) rather than trying to suit everyone. Use it as-is, or fork it and change what
+doesn't fit.
 
-### Purpose
-
-- **Consistency**: Maintain uniform development environments across your macOS machines
-- **Efficiency**: Reduce setup time and configuration overhead
-- **Productivity**: Pre-configured tools and settings for optimal workflow
-- **Version Control**: Track and manage configuration changes over time
+`install.sh` takes a fresh Mac to a working setup; `update.sh` keeps it current.
 
 ## Features
 
-- 🔧 **Shell Configuration**: Optimized shell settings (Zsh)
-- 📝 **Editor Configuration**: Vim/Neovim or other editor settings
-- 🎨 **Terminal Customization**: Enhanced terminal experience
-- 🔐 **Security**: Secure credential management practices
-- 🚀 **Performance**: Optimized settings for system performance
-- 📦 **Package Management**: Integration with common package managers
-- 🔄 **Synchronization**: Easy deployment across multiple macOS machines
+- **Shell**: Zsh with Starship prompt, autosuggestions, as-you-type completion, syntax highlighting, fzf and zoxide
+- **Editor**: Neovim with LSP (Bash, CSS, JS/TS, Go, Lua), treesitter, Telescope, format-on-save and git integration; VS Code installed alongside
+- **Terminal**: WezTerm with splits, pane navigation and a blurred background
+- **CLI tools**: `eza`, `bat`, `ripgrep`, `fd`, GNU grep, OpenSSL 3, `delta`, `lazygit`, `xh`, `tldr` and more
+- **Kubernetes**: `kubectl` aliases, `k9s`, `stern`, krew `ctx`/`ns`, and a prompt toggle for the current context
+- **Runtimes**: node, go, bun, python and rust managed by mise
+- **Apps**: WezTerm, VS Code and CaskHub (a GUI for Homebrew casks)
+- **One-command setup and updates**: everything is in a `Brewfile`, linked with GNU Stow
 
 ## Prerequisites
 
@@ -59,34 +59,19 @@ Before installing these dotfiles, ensure you have the following:
 
 ### Homebrew packages
 
-This setup depends on the following Homebrew packages (install on macOS with Homebrew):
-
-- bat
-- eza
-- figlet
-- fzf
-- grep (GNU grep, used ahead of the macOS BSD grep)
-- mise
-- neovim
-- ripgrep
-- starship
-- stow
-- tree-sitter-cli (builds Neovim treesitter parsers)
-- zoxide
-- zsh-autocomplete
-- zsh-autosuggestions
-- zsh-syntax-highlighting
-
-Install them with:
+All packages are listed in the [`Brewfile`](Brewfile) (shell plugins, CLI tools, Neovim and
+its formatters, mise, the JetBrainsMono Nerd Font, and on macOS the WezTerm, VS Code and CaskHub apps).
+`install.sh` installs them for you, or run:
 
 ```bash
-# Install Homebrew first (if not installed)
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
-# Install required packages
-brew install bat eza figlet fzf grep mise neovim ripgrep starship stow tree-sitter-cli zoxide \
-  zsh-autocomplete zsh-autosuggestions zsh-syntax-highlighting
+brew bundle --file ~/dotfiles/Brewfile
 ```
+
+### Runtimes
+
+Language runtimes (node, go, bun, python, rust, ...) are managed by [mise](https://mise.jdx.dev/)
+from [`.config/mise/config.toml`](.config/mise/config.toml). The Neovim language servers need
+`npm` and `go`, so run `mise install` after linking the dotfiles (`install.sh` does this).
 
 ### Optional Extras
 
@@ -103,17 +88,17 @@ curl -fsSL https://raw.githubusercontent.com/worlddrknss/dotfiles/main/install.s
 [`install.sh`](install.sh) will:
 
 1. Install Homebrew if it isn't already installed
-2. Install the Homebrew packages listed above (plus the WezTerm app on macOS)
-3. Clone this repo to `~/dotfiles` (skipped if it's already there)
+2. Clone this repo to `~/dotfiles` (skipped if it's already there)
+3. Install everything in the `Brewfile`
 4. Move any existing files that would be overwritten to `~/.dotfiles-backup/<timestamp>/`
 5. Run `stow .` to symlink everything into your home directory
-6. Install Neovim plugins
+6. Install runtimes with `mise install`, then Neovim plugins
 7. Delete the downloaded installer and start a new `zsh` with the config loaded
 
 It's safe to re-run. The copy of `install.sh` inside `~/dotfiles` is never deleted.
 
-> The WezTerm config uses the **DankMono Nerd Font**, which isn't on Homebrew; install it
-> separately or change `config.font` in `.config/wezterm/wezterm.lua`.
+> WezTerm uses the paid **DankMono Nerd Font** if it's installed, and falls back to
+> **JetBrainsMono Nerd Font** (installed by the `Brewfile`) otherwise.
 
 ### Manual installation
 
@@ -124,7 +109,7 @@ stow .          # symlink everything into $HOME
 exec zsh        # reload the shell
 ```
 
-Files listed in [`.stow-local-ignore`](.stow-local-ignore) (README, install.sh, git files) are not linked.
+Files listed in [`.stow-local-ignore`](.stow-local-ignore) (README, install.sh, update.sh, Brewfile, git files) are not linked.
 
 ## Configuration
 
@@ -145,6 +130,24 @@ Configuration supports local machine-specific overrides:
 # Local overrides (not tracked in git)
 ~/.zshrc.local
 ```
+
+## Tools
+
+Installed by the `Brewfile` alongside the core shell setup:
+
+| Tool | Use it for |
+| --- | --- |
+| `k9s` | Full-screen Kubernetes manager: pods, logs, shells, port-forwards |
+| `stern <name>` | Follow logs from every matching pod at once |
+| `lazygit` (`lg`) | Full-screen git: stage parts of files, rebase, resolve conflicts |
+| `delta` | Syntax-highlighted `git diff` (set as git's pager by `install.sh`; `n`/`N` jump between files) |
+| `fd` | Fast `find` that respects `.gitignore` |
+| `htop` | Process viewer |
+| `dust` / `duf` | What's using disk space / free space per drive |
+| `tldr <cmd>` | Short, example-first help pages |
+| `xh` | HTTP client: `xh POST api.example.com/items name=foo` |
+| `gh`, `jq`, `yq`, `tmux` | GitHub CLI, JSON and YAML processing, terminal multiplexer |
+| `openssl` | OpenSSL 3 (put ahead of the LibreSSL build that ships with macOS) |
 
 ## Keybindings and Aliases
 
@@ -170,7 +173,7 @@ Only custom bindings are listed; tool defaults still apply.
 | `Tab` | Accept the grey autosuggestion, or complete if there is none |
 | `Ctrl+R` | Fuzzy search history (fzf) |
 | `Ctrl+T` | Fuzzy insert a file path (fzf) |
-| `Opt+C` | Fuzzy `cd` into a subdirectory (fzf) |
+| `Opt+C` | Fuzzy `cd` into a subdirectory (fzf, via `fd`) |
 
 Completion matches hidden files without the leading dot and falls back to case-insensitive and substring matches, so `~/zs` finds `~/.zshrc`.
 
@@ -185,6 +188,15 @@ Leader is `Space`.
 | `<leader>fb` | Open buffers |
 | `<leader>fh` | Help tags |
 | `<leader>e` | Toggle file explorer (Neo-tree) |
+| `]h` / `[h` | Next/previous git hunk |
+| `<leader>hp` | Preview git hunk |
+| `<leader>hr` | Reset git hunk |
+| `<leader>hb` | Git blame for the current line |
+| `<leader>gg` | Open lazygit |
+| `<leader>gl` | Lazygit log |
+
+Press `Space` and pause to see available keys (which-key). Files are formatted on save
+(gofmt, prettier, shfmt, otherwise the LSP); Lua files are skipped. Yanks use the system clipboard.
 
 LSP uses Neovim's built-in defaults: `K` hover, `grn` rename, `gra` code action, `grr` references, `gri` implementation, `[d` / `]d` previous/next diagnostic.
 
@@ -199,6 +211,7 @@ LSP uses Neovim's built-in defaults: `K` hover, `grn` rename, `gra` code action,
 | `b` | `bat` with pager and line numbers |
 | `f` | `fzf` with file/directory preview |
 | `n` / `nv` | `nvim` / `nvim` at the last line |
+| `lg` | `lazygit` |
 | `sudo n <file>` | `sudoedit` in your Neovim (your config, written back as root) |
 | `cd` / `j` | `z` (zoxide smart jump) |
 | `ji` | `zi` (interactive zoxide picker) |
@@ -230,9 +243,13 @@ LSP uses Neovim's built-in defaults: `K` hover, `grn` rename, `gra` code action,
 dotfiles/
 ├── README.md              # This file
 ├── install.sh             # Bootstrap script for new machines
+├── update.sh              # Pull, upgrade packages/runtimes/plugins, re-stow
+├── Brewfile               # Homebrew packages
+├── .gitignore             # Ignores .DS_Store and Brewfile.lock.json
 ├── .stow-local-ignore     # Files stow should not link
+├── .stowrc               # Stow options (--no-folding: link files, not whole folders)
 ├── .zshrc                 # Zsh configuration
-├── .config/               # Neovim, WezTerm and Starship configurations
+├── .config/               # Neovim, WezTerm, Starship and mise configurations
 └── .git/                  # Git repository metadata
 ```
 
@@ -242,19 +259,25 @@ dotfiles/
 
 After installation, the dotfiles work automatically. No additional steps are required for normal usage.
 
-### Updating Configuration
+### Updating
 
 ```bash
-# Navigate to dotfiles directory
-cd ~/dotfiles
-
-# Pull latest changes
-git pull origin main
-
-# Link any newly added files, then reload the shell
-stow .
+~/dotfiles/update.sh
 exec zsh
 ```
+
+[`update.sh`](update.sh) will:
+
+1. Pull the latest dotfiles (skipped if you have uncommitted changes, so it never merges over your work)
+2. Install anything new in the `Brewfile`, then `brew upgrade`
+3. Run `stow .` to link newly added files
+4. Run `mise install` and `mise upgrade`
+5. Update Neovim plugins (`Lazy sync`) and treesitter parsers
+6. Refresh `tldr` pages and krew plugins
+
+If plugin versions changed, commit the updated `.config/nvim/lazy-lock.json`.
+It doesn't remove packages that were dropped from the `Brewfile`; run
+`brew bundle cleanup --file ~/dotfiles/Brewfile` to review those.
 
 ### Adding New Configurations
 

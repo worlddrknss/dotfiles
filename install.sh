@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 # Bootstrap these dotfiles on a new machine:
 #   1. install Homebrew if missing
-#   2. install the required packages
-#   3. clone the repo to ~/dotfiles (if not already there)
+#   2. clone the repo to ~/dotfiles (if not already there)
+#   3. install the packages in the Brewfile
 #   4. back up conflicting files, then `stow .` into $HOME
-#   5. delete this installer (unless it's the copy inside the repo)
-#   6. start a fresh zsh with the new config loaded
+#   5. install runtimes with mise, then Neovim plugins
+#   6. delete this installer (unless it's the copy inside the repo)
+#   7. start a fresh zsh with the new config loaded
 #
 # Usage:
 #   curl -fsSL https://raw.githubusercontent.com/worlddrknss/dotfiles/main/install.sh | bash
@@ -14,28 +15,6 @@ set -euo pipefail
 
 REPO_URL="https://github.com/worlddrknss/dotfiles.git"
 DOTFILES_DIR="$HOME/dotfiles"
-
-FORMULAE=(
-  bat
-  eza
-  figlet
-  fzf
-  git
-  grep
-  mise
-  neovim
-  ripgrep
-  starship
-  stow
-  tree-sitter-cli
-  zoxide
-  zsh-autocomplete
-  zsh-autosuggestions
-  zsh-syntax-highlighting
-)
-CASKS=(
-  wezterm
-)
 
 info() { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
 warn() { printf '\033[1;33mwarning:\033[0m %s\n' "$*" >&2; }
@@ -70,26 +49,10 @@ else
 fi
 
 # ------------------------------------------------------------
-# Packages
-# ------------------------------------------------------------
-info "Installing packages: ${FORMULAE[*]}"
-brew install "${FORMULAE[@]}"
-
-if [[ "$(uname -s)" == "Darwin" ]]; then
-  for cask in "${CASKS[@]}"; do
-    if brew list --cask "$cask" >/dev/null 2>&1; then
-      info "$cask already installed"
-    else
-      info "Installing $cask"
-      # Don't abort the whole setup if the app already exists outside Homebrew
-      brew install --cask "$cask" || warn "could not install $cask; install it manually"
-    fi
-  done
-fi
-
-# ------------------------------------------------------------
 # Clone
 # ------------------------------------------------------------
+command -v git >/dev/null 2>&1 || brew install git
+
 if [[ -d "$DOTFILES_DIR/.git" ]]; then
   info "Dotfiles already cloned at $DOTFILES_DIR"
 elif [[ -e "$DOTFILES_DIR" ]]; then
@@ -100,6 +63,13 @@ else
 fi
 
 cd "$DOTFILES_DIR"
+
+# ------------------------------------------------------------
+# Packages (single source of truth: Brewfile)
+# ------------------------------------------------------------
+info "Installing packages from Brewfile"
+brew bundle --file "$DOTFILES_DIR/Brewfile" ||
+  warn "some Brewfile entries failed (e.g. an app already installed outside Homebrew); continuing"
 
 # ------------------------------------------------------------
 # Stow (back up anything that would block the symlinks)
@@ -128,6 +98,41 @@ backup_conflicts() {
 info "Linking dotfiles into $HOME"
 backup_conflicts
 stow -v -t "$HOME" . || die "stow failed; see the conflicts above"
+
+# ------------------------------------------------------------
+# Runtimes (node, go, bun, ...) — the Neovim language servers need npm and go
+# ------------------------------------------------------------
+if command -v mise >/dev/null 2>&1; then
+  info "Installing runtimes with mise"
+  # The global config is a symlink into ~/dotfiles, which mise treats as untrusted
+  mise trust "$DOTFILES_DIR/.config/mise/config.toml"
+  mise install || warn "mise install failed; run it manually"
+  # Put the installed tools on PATH for the Neovim plugin step below
+  export PATH="${MISE_DATA_DIR:-$HOME/.local/share/mise}/shims:$PATH"
+fi
+
+# ------------------------------------------------------------
+# Tool setup
+# ------------------------------------------------------------
+if command -v kubectl-krew >/dev/null 2>&1; then
+  info "Installing kubectl plugins (ctx, ns)"
+  kubectl krew install ctx ns >/dev/null 2>&1 || warn "krew plugin install failed; run: kubectl krew install ctx ns"
+fi
+
+if command -v tldr >/dev/null 2>&1; then
+  tldr --update >/dev/null 2>&1 || warn "tldr cache update failed; run: tldr --update"
+fi
+
+# ~/.gitconfig isn't tracked (identity, signing key), so only fill in the
+# delta settings when no pager has been chosen yet
+if command -v delta >/dev/null 2>&1 && ! git config --global --get core.pager >/dev/null; then
+  info "Configuring git to use delta for diffs"
+  git config --global core.pager delta
+  git config --global interactive.diffFilter "delta --color-only"
+  git config --global delta.navigate true
+  git config --global delta.line-numbers true
+  git config --global merge.conflictStyle zdiff3
+fi
 
 # ------------------------------------------------------------
 # Neovim plugins (lazy.nvim bootstraps itself on first start)
