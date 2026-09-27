@@ -38,7 +38,7 @@ doesn't fit.
 - **CLI tools**: `eza`, `bat`, `ripgrep`, `fd`, GNU grep, OpenSSL 3, `delta`, `lazygit`, `xh`, `tldr` and more
 - **Kubernetes**: `kubectl` aliases, `k9s`, `stern`, krew `ctx`/`ns`, and a prompt toggle for the current context
 - **Runtimes**: node, go, bun, python and rust managed by mise
-- **Apps**: WezTerm, VS Code, Raycast, OrbStack (Docker and local Kubernetes), Postman and CaskHub (a GUI for Homebrew casks)
+- **Apps**: WezTerm, VS Code, Raycast, OrbStack (Docker and local Kubernetes), Postman, DBeaver, ngrok, LM Studio, Claude Code and CaskHub (a GUI for Homebrew casks), plus optional personal and maker app groups
 - **Cloud and secrets**: `awscli`, OpenTofu, `sops` + `age`, `gitleaks`
 - **One-command setup and updates**: everything is in a `Brewfile`, linked with GNU Stow
 
@@ -69,9 +69,11 @@ Packages are split into a required core and optional groups:
 | [`brewfiles/neovim-extras.Brewfile`](brewfiles/neovim-extras.Brewfile) | prettier, shfmt, lazygit, delta | on |
 | [`brewfiles/cli.Brewfile`](brewfiles/cli.Brewfile) | htop, dust, duf, tldr, xh, jq, yq, gh, uv, OpenSSL 3 | on |
 | [`brewfiles/fonts.Brewfile`](brewfiles/fonts.Brewfile) | JetBrainsMono Nerd Font | on |
-| [`brewfiles/kubernetes.Brewfile`](brewfiles/kubernetes.Brewfile) | kubectl, krew, k9s, stern | off |
+| [`brewfiles/kubernetes.Brewfile`](brewfiles/kubernetes.Brewfile) | kubectl, krew, k9s, stern, Freelens | off |
 | [`brewfiles/cloud.Brewfile`](brewfiles/cloud.Brewfile) | awscli, OpenTofu, sops + age, gitleaks, git-filter-repo, psql | off |
-| [`brewfiles/apps.Brewfile`](brewfiles/apps.Brewfile) | WezTerm, VS Code, Raycast, OrbStack, Postman, CaskHub (macOS) | off |
+| [`brewfiles/apps.Brewfile`](brewfiles/apps.Brewfile) | WezTerm, VS Code, Raycast, OrbStack, Postman, DBeaver, ngrok, LM Studio, CaskHub, Claude Code | off |
+| [`brewfiles/personal.Brewfile`](brewfiles/personal.Brewfile) | Chrome, Opera GX, Discord, Signal, Obsidian, Keeper, Proton Mail Bridge, AppCleaner | off |
+| [`brewfiles/maker.Brewfile`](brewfiles/maker.Brewfile) | balenaEtcher, Bambu Studio, Raspberry Pi Imager | off |
 
 `install.sh` lets you pick groups; all configs are linked either way, and the shell skips
 anything that isn't installed. To add a group, drop a new `brewfiles/<name>.Brewfile` with
