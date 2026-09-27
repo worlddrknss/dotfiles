@@ -289,10 +289,14 @@ bindkey '\e[1;P1' toggle_k8s_widget
 # ============================================================
 if command -v zoxide &> /dev/null; then
   eval "$(zoxide init zsh)"
-  alias cd='z'
-  alias j='z'
-  alias ji='zi'
-  alias jl='zoxide query -ls'
+  # Claude Code snapshots aliases but not zoxide's precmd hook, so cd=z there
+  # triggers zoxide's "configuration issue" warning on every cd. Keep plain cd.
+  if [[ -z "$CLAUDECODE" ]]; then
+    alias cd='z'
+    alias j='z'
+    alias ji='zi'
+    alias jl='zoxide query -ls'
+  fi
 fi
 
 # ============================================================
