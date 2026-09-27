@@ -8,18 +8,15 @@ scan_timeout = 200
 command_timeout = 1000
 
 format = """
-[](color_orange)\
+[](fg:c_accent)\
 $os\
+[](fg:c_accent bg:c_surface)\
 $username\
-[](bg:color_yellow fg:color_orange)\
 $directory\
-[](fg:color_yellow bg:color_aqua)\
 $git_branch\
 $git_status\
 $git_state\
-[](fg:color_aqua bg:color_green)\
 $kubernetes\
-[](fg:color_green bg:color_blue)\
 $c\
 $cpp\
 $rust\
@@ -31,35 +28,31 @@ $java\
 $kotlin\
 $haskell\
 $python\
-[](fg:color_blue bg:color_bg3)\
 $docker_context\
 $conda\
 $pixi\
-[](fg:color_bg3 bg:color_purple)\
 $azure\
 $gcloud\
-[](fg:color_purple bg:color_bg1)\
-$time\
-[ ](fg:color_bg1)\
+[](fg:c_surface)\
 $fill\
 $cmd_duration\
 $status\
+$time\
 $line_break$character"""
 
-palette = 'onedark'
+palette = 'drknss'
 
-[palettes.onedark]
-color_fg0 = '#1e222a'
-color_bg1 = '#4b5263'
-color_bg3 = '#3e4452'
-color_blue = '#528bda'
-color_aqua = '#3f9da6'
-color_aqua_light = '#56b6c2'
-color_green = '#7dab5a'
-color_orange = '#cc8850'
-color_purple = '#b160c9'
-color_red = '#d75f6a'
-color_yellow = '#d4a84b'
+# Drknss: old-school black, greys, red and green (shared with .config/wezterm/wezterm.lua)
+[palettes.drknss]
+c_bg = '#000000'
+c_surface = '#1a1a1a'
+c_muted = '#6b6b6b'
+c_subtle = '#a3a3a3'
+c_fg = '#d9d9d9'
+c_accent = '#4dd44d'
+c_green = '#4dd44d'
+c_red = '#e5332a'
+c_olive = '#b8b84a'
 
 [fill]
 symbol = " "
@@ -75,19 +68,20 @@ disabled = false
 # ─────────────────────────────────────────────
 [character]
 disabled = false
-success_symbol = '[](bold fg:color_green)'
-error_symbol = '[](bold fg:color_red)'
-vimcmd_symbol = '[](bold fg:color_green)'
-vimcmd_replace_one_symbol = '[](bold fg:color_purple)'
-vimcmd_replace_symbol = '[](bold fg:color_purple)'
-vimcmd_visual_symbol = '[](bold fg:color_yellow)'
+success_symbol = '[❯](bold fg:c_green)'
+error_symbol = '[❯](bold fg:c_red)'
+vimcmd_symbol = '[❮](bold fg:c_green)'
+vimcmd_replace_one_symbol = '[❮](bold fg:c_red)'
+vimcmd_replace_symbol = '[❮](bold fg:c_red)'
+vimcmd_visual_symbol = '[❮](bold fg:c_olive)'
 
 # ─────────────────────────────────────────────
 # IDENTITY / CONTEXT
 # ─────────────────────────────────────────────
 [os]
+format = '[ $symbol ]($style)'
 disabled = false
-style = "bg:color_orange fg:color_fg0"
+style = 'bg:c_accent fg:c_bg'
 
 [os.symbols]
 Windows = "󰍲"
@@ -115,17 +109,17 @@ Pop = ""
 
 [username]
 show_always = true
-style_user = "bg:color_orange fg:color_fg0"
-style_root = "bg:color_orange fg:color_fg0"
+style_user = 'bg:c_surface fg:c_subtle'
+style_root = 'bg:c_surface fg:c_red bold'
 format = '[ $user ]($style)'
 
 [directory]
-style = "fg:color_fg0 bg:color_yellow"
-format = "[ $path ]($style)"
+style = 'bg:c_surface fg:c_green bold'
+format = '[ $path ]($style)([$read_only ]($read_only_style))'
 truncation_length = 3
 truncation_symbol = "…/"
 read_only = " 󰌾"
-read_only_style = "bold"
+read_only_style = 'bg:c_surface fg:c_red'
 truncate_to_repo = true
 
 [directory.substitutions]
@@ -140,12 +134,12 @@ truncate_to_repo = true
 # ─────────────────────────────────────────────
 [git_branch]
 symbol = ""
-style = "bg:color_aqua"
-format = '[[ $symbol $branch ](fg:color_fg0 bg:color_aqua)]($style)'
+style = 'bg:c_surface fg:c_fg'
+format = '[ $symbol $branch ]($style)'
 
 [git_status]
-style = "bg:color_aqua"
-format = '[[($all_status$ahead_behind )](fg:color_fg0 bg:color_aqua)]($style)'
+style = 'bg:c_surface fg:c_red'
+format = '[($all_status$ahead_behind )]($style)'
 conflicted = "≠"
 ahead      = "⇡"
 behind     = "⇣"
@@ -158,86 +152,86 @@ renamed    = "»"
 deleted    = "✘"
 
 [git_state]
-style = "bg:color_aqua"
-format = '[[ $state( $progress_current/$progress_total) ](fg:color_fg0 bg:color_aqua)]($style)'
+style = 'bg:c_surface fg:c_red bold'
+format = '[ $state( $progress_current/$progress_total) ]($style)'
 
 # ─────────────────────────────────────────────
 # LANGUAGES
 # ─────────────────────────────────────────────
 [c]
 symbol = " "
-style = "bg:color_blue"
-format = '[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)'
+style = 'bg:c_surface fg:c_subtle'
+format = '[ $symbol( $version) ]($style)'
 
 [cpp]
 symbol = " "
-style = "bg:color_blue"
-format = '[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)'
+style = 'bg:c_surface fg:c_subtle'
+format = '[ $symbol( $version) ]($style)'
 
 [golang]
 symbol = ""
-style = "bg:color_blue"
-format = '[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)'
+style = 'bg:c_surface fg:c_subtle'
+format = '[ $symbol( $version) ]($style)'
 
 [nodejs]
 symbol = ""
-style = "bg:color_blue"
-format = '[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)'
+style = 'bg:c_surface fg:c_subtle'
+format = '[ $symbol( $version) ]($style)'
 
 [bun]
 symbol = ""
-style = "bg:color_blue"
-format = '[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)'
+style = 'bg:c_surface fg:c_subtle'
+format = '[ $symbol( $version) ]($style)'
 
 [php]
 symbol = ""
-style = "bg:color_blue"
-format = '[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)'
+style = 'bg:c_surface fg:c_subtle'
+format = '[ $symbol( $version) ]($style)'
 
 [java]
 symbol = ""
-style = "bg:color_blue"
-format = '[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)'
+style = 'bg:c_surface fg:c_subtle'
+format = '[ $symbol( $version) ]($style)'
 
 [kotlin]
 symbol = ""
-style = "bg:color_blue"
-format = '[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)'
+style = 'bg:c_surface fg:c_subtle'
+format = '[ $symbol( $version) ]($style)'
 
 [haskell]
 symbol = ""
-style = "bg:color_blue"
-format = '[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)'
+style = 'bg:c_surface fg:c_subtle'
+format = '[ $symbol( $version) ]($style)'
 
 [python]
 symbol = ""
-style = "bg:color_blue"
-format = '[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)'
+style = 'bg:c_surface fg:c_subtle'
+format = '[ $symbol( $version) ]($style)'
 
 [rust]
 symbol = ""
-style = "bg:color_blue"
-format = '[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)'
+style = 'bg:c_surface fg:c_subtle'
+format = '[ $symbol( $version) ]($style)'
 
 # ─────────────────────────────────────────────
 # CLOUD
 # ─────────────────────────────────────────────
 [azure]
 symbol = ""
-style = "bg:color_purple"
-format = '[[ $symbol( $subscription) ](fg:color_fg0 bg:color_purple)]($style)'
+style = 'bg:c_surface fg:c_subtle'
+format = '[ $symbol( $subscription) ]($style)'
 disabled = false
 
 [aws]
 symbol = ""
-style = "bg:color_purple"
-format = '[[ $symbol( $profile) ](fg:color_fg0 bg:color_purple)]($style)'
+style = 'bg:c_surface fg:c_subtle'
+format = '[ $symbol( $profile) ]($style)'
 disabled = true
 
 [gcloud]
 symbol = "󰊮"
-style = "bg:color_purple"
-format = '[[ $symbol( $account) ](fg:color_fg0 bg:color_purple)]($style)'
+style = 'bg:c_surface fg:c_subtle'
+format = '[ $symbol( $account) ]($style)'
 disabled = false
 
 # ─────────────────────────────────────────────
@@ -245,24 +239,24 @@ disabled = false
 # ─────────────────────────────────────────────
 [kubernetes]
 symbol = "󱃾 "
-style = "bg:color_green fg:color_fg0"
-format = '[[ $symbol $context( $namespace) ](fg:color_fg0 bg:color_green)]($style)'
+style = 'bg:c_surface fg:c_green'
+format = '[ $symbol$context( \($namespace\)) ]($style)'
 disabled = false
 detect_env_vars = ["STARSHIP_K8S_VISIBLE"]
 
 [[kubernetes.contexts]]
 context_pattern = ".*k3s.*"
-style = "bg:color_green fg:color_fg0"
+style = 'bg:c_surface fg:c_green'
 symbol = "󰄬 "
 
 [[kubernetes.contexts]]
 context_pattern = ".*stage.*"
-style = "bg:color_green fg:color_fg0"
+style = 'bg:c_surface fg:c_olive'
 symbol = "󰀦 "
 
 [[kubernetes.contexts]]
 context_pattern = ".*prod.*"
-style = "bg:color_green fg:color_fg0"
+style = 'bg:c_surface fg:c_red bold'
 symbol = "󰀨 "
 
 # ─────────────────────────────────────────────
@@ -270,17 +264,17 @@ symbol = "󰀨 "
 # ─────────────────────────────────────────────
 [docker_context]
 symbol = ""
-style = "bg:color_bg3"
-format = '[[ $symbol( $context) ](fg:color_aqua_light bg:color_bg3)]($style)'
+style = 'bg:c_surface fg:c_subtle'
+format = '[ $symbol( $context) ]($style)'
 
 [conda]
 symbol = ""
-style = "bg:color_bg3"
-format = '[[ $symbol( $environment) ](fg:color_aqua_light bg:color_bg3)]($style)'
+style = 'bg:c_surface fg:c_subtle'
+format = '[ $symbol( $environment) ]($style)'
 
 [pixi]
-style = "bg:color_bg3"
-format = '[[ $symbol( $version)( $environment) ](fg:color_fg0 bg:color_bg3)]($style)'
+style = 'bg:c_surface fg:c_subtle'
+format = '[ $symbol( $version)( $environment) ]($style)'
 
 # ─────────────────────────────────────────────
 # TIME
@@ -288,19 +282,19 @@ format = '[[ $symbol( $version)( $environment) ](fg:color_fg0 bg:color_bg3)]($st
 [time]
 disabled = false
 time_format = "%R"
-style = "bg:color_bg1"
-format = '[[  $time ](fg:color_fg0 bg:color_bg1)]($style)'
+style = 'fg:c_muted'
+format = '[ $time]($style)'
 
 # ─────────────────────────────────────────────
 # RIGHT PROMPT
 # ─────────────────────────────────────────────
 [cmd_duration]
 min_time = 800
-format = "[·](dim) [󱎫 $duration]($style) "
-style = "dim"
+format = '[󱎫 $duration]($style) '
+style = 'fg:c_olive'
 
 [status]
 disabled = false
-format = "[·](dim) [󰅚 $status]($style) "
-style = "bold"
+format = '[󰅚 $status]($style) '
+style = 'fg:c_red bold'
 map_symbol = true

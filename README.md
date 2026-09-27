@@ -23,7 +23,7 @@
 ## Overview
 
 This is my personal, opinionated development environment for macOS. It makes choices for you
-(OneDark everywhere, Neovim as the editor, modern replacements for `ls`/`cat`/`find`, Kubernetes
+(a custom dark theme, Neovim as the editor, modern replacements for `ls`/`cat`/`find`, Kubernetes
 shortcuts baked in) rather than trying to suit everyone. Use it as-is, or fork it and change what
 doesn't fit.
 
@@ -33,7 +33,8 @@ doesn't fit.
 
 - **Shell**: Zsh with Starship prompt, autosuggestions, as-you-type completion, syntax highlighting, fzf and zoxide
 - **Editor**: Neovim with LSP (Bash, CSS, JS/TS, Go, Lua), treesitter, Telescope, format-on-save and git integration; VS Code installed alongside
-- **Terminal**: WezTerm with splits, pane navigation and a blurred background
+- **Terminal**: WezTerm with splits and pane navigation
+- **Theme**: *Drknss*, an old-school black, grey, red and green palette shared by WezTerm (`wezterm.lua`), the Starship prompt (`starship.toml`) and Neovim (`colors/drknss.lua`). The terminal is 70% opaque black with blur, and Neovim's background is transparent so it shows through
 - **CLI tools**: `eza`, `bat`, `ripgrep`, `fd`, GNU grep, OpenSSL 3, `delta`, `lazygit`, `xh`, `tldr` and more
 - **Kubernetes**: `kubectl` aliases, `k9s`, `stern`, krew `ctx`/`ns`, and a prompt toggle for the current context
 - **Runtimes**: node, go, bun, python and rust managed by mise

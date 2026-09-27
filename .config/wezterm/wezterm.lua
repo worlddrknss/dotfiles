@@ -1,6 +1,59 @@
 local wezterm = require 'wezterm'
 local config = wezterm.config_builder()
 
+-- Drknss: old-school black, greys, red and green (shared with .config/starship.toml)
+local palette = {
+    bg        = "#000000",
+    bg1       = "#0d0d0d",
+    surface   = "#1a1a1a",
+    border    = "#2e2e2e",
+    muted     = "#6b6b6b",
+    subtle    = "#a3a3a3",
+    fg        = "#d9d9d9",
+    red       = "#e5332a",
+    red_hi    = "#ff3b2f",
+    green     = "#4dd44d",
+    green_hi  = "#7cff7c",
+    olive     = "#b8b84a", -- stands in for yellow
+    olive_hi  = "#d7d76a",
+    sea       = "#52b788", -- stands in for cyan
+    sea_hi    = "#74d6a4",
+}
+
+config.color_schemes = {
+    ["Drknss"] = {
+        foreground    = palette.fg,
+        background    = palette.bg,
+        cursor_bg     = palette.green,
+        cursor_fg     = palette.bg,
+        cursor_border = palette.green,
+        compose_cursor = palette.red,
+        selection_bg  = "#333333",
+        selection_fg  = palette.fg,
+        scrollbar_thumb = palette.border,
+        split         = palette.border,
+        -- black, red, green, yellow, blue, magenta, cyan, white:
+        -- blue and magenta are greys, yellow/cyan are green-family shades
+        ansi = {
+            palette.surface, palette.red, palette.green, palette.olive,
+            "#8c8c8c", "#a6a6a6", palette.sea, "#c8c8c8",
+        },
+        brights = {
+            "#4d4d4d", palette.red_hi, palette.green_hi, palette.olive_hi,
+            "#b3b3b3", "#cccccc", palette.sea_hi, "#ffffff",
+        },
+        tab_bar = {
+            background = palette.bg,
+            active_tab = { bg_color = palette.surface, fg_color = palette.green, intensity = "Bold" },
+            inactive_tab = { bg_color = palette.bg, fg_color = palette.muted },
+            inactive_tab_hover = { bg_color = palette.bg1, fg_color = palette.subtle },
+            new_tab = { bg_color = palette.bg, fg_color = palette.muted },
+            new_tab_hover = { bg_color = palette.bg1, fg_color = palette.green },
+        },
+    },
+}
+config.color_scheme = "Drknss"
+
 wezterm.on("gui-startup", function(cmd)
     local screen            = wezterm.gui.screens().active
     local ratio             = 0.7
@@ -102,32 +155,9 @@ config.keys = {
     },
 }
 
--- Background Image
-config.background = {
-    {
-        source = {
-            Color = "#000000",
-        },
-        width = "100%",
-        height = "100%",
-        opacity = 0.8,
-    },
-    {
-        source = {
-            File = {
-                path = wezterm.config_dir .. "/assets/background.jpg",
-            },
-        },
-        horizontal_align = "Center",
-        vertical_align   = "Middle",
-        opacity = 0.3,
-    },
-}
-
--- Blur Configuations
--- Transparency comes from the background layers above; window_background_opacity
--- would add another implicit layer on top of them.
-config.macos_window_background_blur = 30
+-- Background: black at 70% opacity, blurred (color comes from the scheme's bg)
+config.window_background_opacity = 0.70
+config.macos_window_background_blur = 40
 
 -- Window Frame (Border)
 config.window_frame = {
@@ -135,10 +165,13 @@ config.window_frame = {
     border_right_width = 2,
     border_bottom_height = 2,
     border_top_height = 2,
-    border_left_color = "#333333",
-    border_right_color = "#333333",
-    border_bottom_color = "#333333",
-    border_top_color = "#333333",
+    border_left_color = palette.border,
+    border_right_color = palette.border,
+    border_bottom_color = palette.border,
+    border_top_color = palette.border,
+    -- Tab bar strip (shown when more than one tab is open)
+    active_titlebar_bg = palette.bg,
+    inactive_titlebar_bg = palette.bg,
 }
 
 -- Misc Configurations
@@ -146,7 +179,6 @@ config.max_fps = 120
 config.prefer_egl = true
 config.hide_tab_bar_if_only_one_tab = true
 -- config.window_decorations = "RESIZE"
-config.color_scheme = 'OneDark (base16)'
 config.scrollback_lines = 50000
 config.adjust_window_size_when_changing_font_size = false
 
