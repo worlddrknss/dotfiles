@@ -19,7 +19,12 @@ wezterm.on("gui-startup", function(cmd)
 -- Font Configurations
 config.font_size = 14
 config.line_height = 1.2
-config.font = wezterm.font("DankMono Nerd Font")
+-- DankMono is a paid font; fall back to the free JetBrainsMono Nerd Font
+-- (brew install --cask font-jetbrains-mono-nerd-font) so icons still render.
+config.font = wezterm.font_with_fallback({
+    "DankMono Nerd Font",
+    "JetBrainsMono Nerd Font",
+})
 
 -- Key Bindings
 config.keys = {
