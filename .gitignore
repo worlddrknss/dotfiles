@@ -1,0 +1,5 @@
+# macOS
+.DS_Store
+
+# Homebrew bundle lock
+Brewfile.lock.json
