@@ -11,6 +11,7 @@
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
 - [Configuration](#configuration)
+- [Keybindings and Aliases](#keybindings-and-aliases)
 - [Repository Structure](#repository-structure)
 - [Usage](#usage)
 - [Maintenance](#maintenance)
@@ -145,13 +146,92 @@ Configuration supports local machine-specific overrides:
 ~/.zshrc.local
 ```
 
+## Keybindings and Aliases
+
+Only custom bindings are listed; tool defaults still apply.
+
+### WezTerm
+
+| Keys | Action |
+| --- | --- |
+| `Cmd+D` | Split pane side by side |
+| `Cmd+Shift+D` | Split pane top/bottom |
+| `Cmd+Opt+Arrow` | Move between panes |
+| `Cmd+Shift+Enter` | Zoom/unzoom current pane |
+| `Cmd+W` | Close current pane (no confirmation) |
+| `Cmd+X` | Clear screen and scrollback |
+| `Cmd+K` | Toggle Kubernetes context in the prompt |
+| `Opt+Left` / `Opt+Right` | Jump back/forward one word |
+
+### Zsh
+
+| Keys | Action |
+| --- | --- |
+| `Tab` | Accept the grey autosuggestion, or complete if there is none |
+| `Ctrl+R` | Fuzzy search history (fzf) |
+| `Ctrl+T` | Fuzzy insert a file path (fzf) |
+| `Opt+C` | Fuzzy `cd` into a subdirectory (fzf) |
+
+Completion matches hidden files without the leading dot and falls back to case-insensitive and substring matches, so `~/zs` finds `~/.zshrc`.
+
+### Neovim
+
+Leader is `Space`.
+
+| Keys | Action |
+| --- | --- |
+| `<leader>ff` | Find files |
+| `<leader>fg` | Live grep |
+| `<leader>fb` | Open buffers |
+| `<leader>fh` | Help tags |
+| `<leader>e` | Toggle file explorer (Neo-tree) |
+
+LSP uses Neovim's built-in defaults: `K` hover, `grn` rename, `gra` code action, `grr` references, `gri` implementation, `[d` / `]d` previous/next diagnostic.
+
+### Shell aliases
+
+| Alias | Runs |
+| --- | --- |
+| `ls` | `eza -alh --group-directories-first --git` |
+| `l` | `eza -1` (names only) |
+| `lt` | `eza --tree --level=2` (skips gitignored files) |
+| `cat` | `bat` without paging |
+| `b` | `bat` with pager and line numbers |
+| `f` | `fzf` with file/directory preview |
+| `n` / `nv` | `nvim` / `nvim` at the last line |
+| `cd` / `j` | `z` (zoxide smart jump) |
+| `ji` | `zi` (interactive zoxide picker) |
+| `jl` | List zoxide directories with scores |
+| `grep`, `egrep`, `fgrep` | GNU grep with color |
+| `rgi` / `rgf` / `rgn` | `rg` ignore-case / list files / with line numbers |
+| `csh` | Pick an SSH host from `~/.ssh/config` with fzf and connect |
+| `rmknown <line>` | Delete a line from `~/.ssh/known_hosts` |
+
+### Kubernetes aliases
+
+| Alias | Runs |
+| --- | --- |
+| `k` | `kubectl` |
+| `kcx` / `kc` | `kubectl ctx` / show current context |
+| `kns` / `kn` | `kubectl ns` / show current namespace |
+| `kg` / `kd` | `kubectl get` / `describe` |
+| `kgp` / `kga` | `kubectl get pods` / `get all` |
+| `kl` | `kubectl logs -f` |
+| `kex` | `kubectl exec -it` |
+| `kaf` | `kubectl apply -f` |
+| `kdel` | `kubectl delete` |
+
+`kcx`/`kns` need the krew `ctx` and `ns` plugins.
+
 ## Repository Structure
 
 ```text
 dotfiles/
 ├── README.md              # This file
+├── install.sh             # Bootstrap script for new machines
+├── .stow-local-ignore     # Files stow should not link
 ├── .zshrc                 # Zsh configuration
-├── .config/               # Tool and application configurations
+├── .config/               # Neovim, WezTerm and Starship configurations
 └── .git/                  # Git repository metadata
 ```
 
