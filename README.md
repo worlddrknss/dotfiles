@@ -199,6 +199,7 @@ LSP uses Neovim's built-in defaults: `K` hover, `grn` rename, `gra` code action,
 | `b` | `bat` with pager and line numbers |
 | `f` | `fzf` with file/directory preview |
 | `n` / `nv` | `nvim` / `nvim` at the last line |
+| `sudo n <file>` | `sudoedit` in your Neovim (your config, written back as root) |
 | `cd` / `j` | `z` (zoxide smart jump) |
 | `ji` | `zi` (interactive zoxide picker) |
 | `jl` | List zoxide directories with scores |

@@ -132,6 +132,22 @@ alias f='fzf --height 40% --layout=reverse --preview="[[ -d {} ]] && eza --tree 
 alias n='nvim'
 alias nv='nvim +'
 
+# `sudo n file` / `sudo nvim file` → sudoedit: edits a temp copy as you (your
+# config, plugins, LSP) and writes it back as root. root has no nvim on PATH
+# and no config, and aliases don't expand after sudo anyway.
+export SUDO_EDITOR="nvim"
+sudo() {
+  case "$1" in
+    n|nv|nvim|vi|vim)
+      shift
+      command sudoedit "${@:#+}"  # drop nv's bare '+' (not a file)
+      ;;
+    *)
+      command sudo "$@"
+      ;;
+  esac
+}
+
 # Eza
 if command -v eza &> /dev/null; then
   # eza reads file names from a non-tty stdin, so with no path it prints
