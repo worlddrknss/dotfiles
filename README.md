@@ -83,9 +83,18 @@ Language runtimes (node, go, bun, python, rust, ...) are managed by [mise](https
 from [`.config/mise/config.toml`](.config/mise/config.toml). The Neovim language servers need
 `npm` and `go`, so run `mise install` after linking the dotfiles (`install.sh` does this).
 
-### Optional Extras
+### Shell frameworks
 
-- [Oh My Zsh](https://ohmyz.sh/) or similar shell framework
+Don't install [Oh My Zsh](https://ohmyz.sh/) (or Prezto and similar frameworks) alongside these
+dotfiles. This setup already loads its own plugins, and a framework breaks it:
+
+- Its installer replaces `~/.zshrc`, removing the stow symlink to this repo's `.zshrc`
+- It runs `compinit` itself, which zsh-autocomplete requires nothing else to do
+- Its theme competes with the Starship prompt
+- Its bundled aliases and plugins override the ones here (`ls`, `grep`, git, autosuggestions)
+
+If Oh My Zsh is already installed, run `uninstall_oh_my_zsh`, then re-link with
+`cd ~/dotfiles && stow .` (or re-run `install.sh`, which backs up conflicting files first).
 
 ## Installation
 
