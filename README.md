@@ -67,7 +67,7 @@ Packages are split into a required core and optional groups:
 | --- | --- | --- |
 | [`Brewfile`](Brewfile) | **core**: zsh plugins, Starship, fzf, zoxide, eza, bat, ripgrep, fd, GNU grep, git, stow, mise, Neovim | always |
 | [`brewfiles/neovim-extras.Brewfile`](brewfiles/neovim-extras.Brewfile) | prettier, shfmt, lazygit, delta | on |
-| [`brewfiles/cli.Brewfile`](brewfiles/cli.Brewfile) | htop, dust, duf, tldr, xh, jq, yq, tmux, gh, uv, OpenSSL 3 | on |
+| [`brewfiles/cli.Brewfile`](brewfiles/cli.Brewfile) | htop, dust, duf, tldr, xh, jq, yq, gh, uv, OpenSSL 3 | on |
 | [`brewfiles/fonts.Brewfile`](brewfiles/fonts.Brewfile) | JetBrainsMono Nerd Font | on |
 | [`brewfiles/kubernetes.Brewfile`](brewfiles/kubernetes.Brewfile) | kubectl, krew, k9s, stern | off |
 | [`brewfiles/cloud.Brewfile`](brewfiles/cloud.Brewfile) | awscli, OpenTofu, sops + age, gitleaks, git-filter-repo, psql | off |
@@ -178,7 +178,7 @@ Installed by the `Brewfile` alongside the core shell setup:
 | `dust` / `duf` | What's using disk space / free space per drive |
 | `tldr <cmd>` | Short, example-first help pages |
 | `xh` | HTTP client: `xh POST api.example.com/items name=foo` |
-| `gh`, `jq`, `yq`, `tmux` | GitHub CLI, JSON and YAML processing, terminal multiplexer |
+| `gh`, `jq`, `yq` | GitHub CLI, JSON and YAML processing, terminal multiplexer |
 | `openssl` | OpenSSL 3 (put ahead of the LibreSSL build that ships with macOS) |
 
 ## Keybindings and Aliases
