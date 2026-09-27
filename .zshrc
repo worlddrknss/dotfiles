@@ -11,6 +11,7 @@ typeset -U path PATH
 path=(
   /opt/homebrew/opt/grep/libexec/gnubin(N)  # GNU grep over BSD grep (brew install grep)
   /opt/homebrew/opt/libpq/bin(N)
+  /opt/homebrew/opt/openssl@3/bin(N)       # keg-only; shadows macOS LibreSSL
   ${KREW_ROOT:-$HOME/.krew}/bin
   $path
   $HOME/.lmstudio/bin(N)
@@ -66,8 +67,20 @@ autoload -Uz add-zsh-hook
 add-zsh-hook precmd _comp_globdots
 
 if command -v fzf &> /dev/null; then
+  # List files with rg: includes dotfiles, skips .git and anything gitignored
+  if command -v rg &> /dev/null; then
+    export FZF_DEFAULT_COMMAND="rg --files --hidden --glob '!.git'"
+    export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+  fi
+  # Opt+C: fuzzy cd into subdirectories, same filtering as above
+  if command -v fd &> /dev/null; then
+    export FZF_ALT_C_COMMAND="fd --type d --hidden --exclude .git"
+  fi
   source <(fzf --zsh)
 fi
+
+# Match bat's syntax colors to the OneDark theme used elsewhere
+export BAT_THEME="OneHalfDark"
 
 # ------------------------------------------------------------
 # Disable autocomplete for zoxide (j / z) to let autosuggestions work
@@ -127,6 +140,9 @@ fi
 
 # FZF with preview (directories get a tree listing instead of a bat error)
 alias f='fzf --height 40% --layout=reverse --preview="[[ -d {} ]] && eza --tree --level=2 --color=always {} || bat --style=numbers --color=always {}"'
+
+# Git
+alias lg='lazygit'
 
 # Neovim
 alias n='nvim'
