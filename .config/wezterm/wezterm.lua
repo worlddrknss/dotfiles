@@ -5,12 +5,13 @@ wezterm.on("gui-startup", function(cmd)
     local screen            = wezterm.gui.screens().active
     local ratio             = 0.7
     local width, height     = screen.width * ratio, screen.height * ratio
-    local tab, pane, window = wezterm.mux.spawn_window {
-      position = {
+    -- Keep any program passed via `wezterm start -- <cmd>`
+    local args = cmd or {}
+    args.position = {
         x = (screen.width - width) / 2,
         y = (screen.height - height) / 2,
         origin = 'ActiveScreen' }
-    }
+    local tab, pane, window = wezterm.mux.spawn_window(args)
     -- window:gui_window():maximize()
     window:gui_window():set_inner_size(width, height)
   end)
@@ -46,8 +47,18 @@ config.keys = {
     {
         key = "x",
         mods = "CMD",
-        action = wezterm.action.SendString "clear\n"
+        -- Clear screen + scrollback without typing into the running program
+        action = wezterm.action.Multiple {
+            wezterm.action.ClearScrollback "ScrollbackAndViewport",
+            wezterm.action.SendKey { key = "l", mods = "CTRL" },
+        },
     },
+    {
+        key = "Enter",
+        mods = "CMD|SHIFT",
+        action = wezterm.action.TogglePaneZoomState,
+    },
+    -- Toggle k8s context in the Starship prompt (toggle_k8s_widget in .zshrc)
     {
         key = "k",
         mods = "CMD",
@@ -109,8 +120,9 @@ config.background = {
 }
 
 -- Blur Configuations
+-- Transparency comes from the background layers above; window_background_opacity
+-- would add another implicit layer on top of them.
 config.macos_window_background_blur = 30
-config.window_background_opacity = 0.80
 
 -- Window Frame (Border)
 config.window_frame = {
